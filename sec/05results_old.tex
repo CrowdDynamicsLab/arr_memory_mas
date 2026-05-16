@@ -1,0 +1,354 @@
+\section{Results}
+\label{sec:results}
+We organize the findings around four claims. First, boundary metadata
+is selectively fragile under handoff compression while operational
+facts remain stable. Second, context dump becomes final leakage when
+explicit boundary markers are absent or weak. Third, raw transcript
+access is not automatically safe; what matters is whether the boundary
+is represented as an operational constraint. Fourth, prompt-only
+mitigation is insufficient, and enforced phrase redaction eliminates
+exact-string leakage but leaves a measurable paraphrase/category
+leakage rate as an open challenge. Table~\ref{tab:results_overview}
+gives the scale and headline result of each experiment.
+\begin{table*}[t]
+\centering
+\caption{Overview of completed experiments. CIs are bootstrap 95\% confidence intervals over scenarios where available.}
+\label{tab:results_overview}
+\small
+\begin{tabular}{@{}p{0.19\linewidth}p{0.23\linewidth}p{0.21\linewidth}p{0.28\linewidth}@{}}
+\toprule
+\textbf{Experiment} & \textbf{Scale} & \textbf{Primary metric} & \textbf{Headline result} \\
+\midrule
+Phase~2 baseline handoffs & 36 scenarios, 5 conditions, 180 prompts, \texttt{gpt-5-mini} & Marker survival $\sigma$ and operational survival $\sigma_{\mathrm{op}}$ & $\sigma=0.954$ [0.933, 0.972], $\sigma_{\mathrm{op}}=0.994$ [0.987, 1.000] \\
+Compression stress tests & 36 scenarios per condition; \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b} & $\sigma$ vs.\ $\sigma_{\mathrm{op}}$ under hard compression & At 25 words: GPT $\sigma=0.690$ vs.\ $\sigma_{\mathrm{op}}=0.997$; DeepSeek $\sigma=0.580$ vs.\ $\sigma_{\mathrm{op}}=0.972$ \\
+Phase~2B context-dump test & 12 scenarios $\times$ 3 variants $\times$ 4 pressures per model & Final audience-facing leakage & No dump: 0/48 on both models; dump with explicit marker: 2/48 GPT, 1/48 DeepSeek; dump without marker: 48/48 GPT, 37/48 DeepSeek \\
+Phase~2C weak-marker test & 12 scenarios $\times$ 4 variants $\times$ 4 pressures per model & Manual final-leakage labels for weak marker & Weak markers leak in 44/48 GPT and 38/48 DeepSeek cells \\
+Single-agent control & 12 scenarios $\times$ 3 direct variants $\times$ 4 pressures per model & Final leakage without an intermediate handoff & Direct full transcript still leaks in 20/48 GPT and 11/48 DeepSeek cells; weak/no marker variants are much worse \\
+Experiment~5 mitigation & 72 generated handoffs, 288 downstream prompts, \texttt{gpt-5-mini} & Final leakage under prompt-only mitigations & Prompt-only mitigation leaks in 58/288 outputs, including the nominally safe schema \\
+Experiment~5B enforced redaction & 288 downstream prompts per model & Exact-phrase leakage plus high-risk manual audit & Exact-phrase leakage is 0/288 on GPT and DeepSeek; high-risk manual audit finds 5/40 GPT and 14/48 DeepSeek paraphrase/category leaks \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% ------------------------------------------------------------------
+\subsection{Evaluator and Label Reliability}
+\label{sec:results_eval}
+
+We use a strict definition of final leakage: a downstream output is counted as a leak only if the sensitive content reaches the audience-facing channel. Sensitive content that appears in an internal handoff, trace, or context section is recorded as \emph{context dump}; it becomes final leakage only if the downstream agent discloses it to the target audience.
+
+Table~\ref{tab:evaluator_reliability} reports the label checks used in the experiments below. The calibrated evaluator exactly matches the full manual labels for Phase~2B on \texttt{gpt-5-mini}. For settings where the evaluator is more likely to miss paraphrase---especially weak markers and redaction experiments---we report targeted manual audits.
+
+\begin{table*}[t]
+\centering
+\caption{Evaluator and manual-label checks.}
+\label{tab:evaluator_reliability}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Check} & \textbf{Scope} & \textbf{Result} \\
+\midrule
+Phase~2B calibrated evaluator & 144 GPT rows & Precision 1.0, recall 1.0, accuracy 1.0 \\
+Phase~2B confusion matrix & 144 GPT rows & TP 50, FP 0, FN 0, TN 94 \\
+Phase~2C GPT manual audit & 50 focused rows & 45/50 manual positives; heuristic undercounts \\
+Phase~2C DeepSeek manual audit & 50 focused rows & 39/50 manual positives; heuristic undercounts \\
+Exp.~5B GPT manual audit & 40 high-risk rows & 5/40 paraphrase/category leaks \\
+Exp.~5B DeepSeek manual audit & 48 high-risk rows & 14/48 paraphrase/category leaks \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% ------------------------------------------------------------------
+\subsection{RQ1: Boundary Metadata Is More Fragile Than Operational Content}
+\label{sec:results_phase2}
+
+The Phase~2 baseline sweep evaluates model-generated handoffs over 36 scenarios, five handoff conditions, and four handoff surfaces. A judge scores each boundary marker and operational fact as preserved, paraphrased, weakened, or absent, which we map to numeric scores of 1.0, 0.75, 0.35, and 0.0. We report mean boundary-marker survival as $\sigma$ and mean operational-fact survival as $\sigma_{\mathrm{op}}$.
+
+Table~\ref{tab:phase2_sigma} shows that baseline handoffs preserve both kinds of information at high rates, but operational content is consistently closer to ceiling. The overall gap is modest in this lenient setting: $\sigma=0.954$ while $\sigma_{\mathrm{op}}=0.994$. Compressed free text and structured schemas are the weakest baseline conditions for marker preservation.
+
+\begin{table}[t]
+\centering
+\caption{Phase~2 baseline handoff survival by condition on \texttt{gpt-5-mini}.}
+\label{tab:phase2_sigma}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Condition} & \boldmath$\sigma$ & \boldmath$\sigma_{\mathrm{op}}$ & \textbf{Task success} \\
+\midrule
+\texttt{free\_text}                    & 0.976 & 1.000 & 0.958 \\
+\texttt{compressed\_free\_text}         & 0.916 & 0.990 & 1.000 \\
+\texttt{preserve\_markers\_instruction} & 0.959 & 0.993 & 0.917 \\
+\texttt{sectioned\_template}            & 0.984 & 1.000 & 0.986 \\
+\texttt{structured\_schema}             & 0.938 & 0.990 & 0.986 \\
+\midrule
+Overall                                 & 0.954 & 0.994 & 0.969 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:phase2_breakdowns_compact} gives the two most compact diagnostic breakdowns. Across surfaces, memory replay preserves markers best while report writing and explicit summaries are weakest. Across marker categories, ownership markers are the most fragile in the baseline sweep. These are not separate experiments; they decompose the same Phase~2 judge pass. Fuller breakdowns, including counts and stress-test category tables, are in Appendix~\ref{app:full_results}.
+
+\begin{table}[t]
+\centering
+\caption{Compact Phase~2 diagnostic breakdowns for \texttt{gpt-5-mini}.}
+\label{tab:phase2_breakdowns_compact}
+\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Slice} & \textbf{Value} & \boldmath$\sigma$ & \boldmath$\sigma_{\mathrm{op}}$ \\
+\midrule
+\multirow{4}{*}{Surface}
+ & \texttt{explicit\_summary}       & 0.944 & 0.995 \\
+ & \texttt{forwarding\_to\_summary} & 0.961 & 0.988 \\
+ & \texttt{memory\_replay}          & 0.979 & 1.000 \\
+ & \texttt{report\_writer}          & 0.940 & 0.990 \\
+\midrule
+\multirow{4}{*}{Marker category}
+ & audience  & 0.951 & -- \\
+ & caveat    & 0.977 & -- \\
+ & hedge     & 0.943 & -- \\
+ & ownership & 0.925 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The baseline result is therefore not that boundary metadata always disappears. Rather, it is selectively more fragile than operational content. This distinction matters because ordinary handoff formats are often verbose enough to preserve both. To test whether the gap widens under realistic compression pressure, we added two hard-budget stress tests: a 40-word condition and a stricter 25-word, one-sentence condition.
+
+Table~\ref{tab:compression_stress} reports the stress-test results. Under 25-word compression, boundary survival drops sharply while operational survival remains near ceiling. The pattern replicates on \texttt{deepseek-r1:32b}: DeepSeek's absolute $\sigma$ is lower than GPT's, but both models show the same selective-fragility signature.
+
+\begin{table*}[t]
+\centering
+\caption{Compression stress tests. Hard compression lowers boundary-marker survival while preserving operational facts.}
+\label{tab:compression_stress}
+\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Model} & \textbf{Condition} & \boldmath$\sigma$ & \boldmath$\sigma_{\mathrm{op}}$ \\
+\midrule
+\texttt{gpt-5-mini} & Baseline Phase~2 & 0.954 [0.933, 0.972] & 0.994 [0.987, 1.000] \\
+\texttt{gpt-5-mini} & 40-word compression & 0.919 [0.863, 0.962] & 0.990 [0.972, 1.000] \\
+\texttt{gpt-5-mini} & 25-word compression & 0.690 [0.581, 0.794] & 0.997 [0.990, 1.000] \\
+\midrule
+\texttt{deepseek-r1:32b} & 40-word compression & 0.774 [0.672, 0.863] & 0.979 [0.944, 1.000] \\
+\texttt{deepseek-r1:32b} & 25-word compression & 0.580 [0.471, 0.687] & 0.972 [0.929, 1.000] \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+We also compute a compression ratio $\rho = 1 - |\mathrm{handoff}|/|\mathrm{upstream}|$. Some baseline formats have negative $\rho$ because templates and schemas expand the upstream transcript. Table~\ref{tab:sigma_rho_compact} reports the resulting trajectory. The clearest positive-compression point is the 25-word condition, where mean $\rho=0.454$, $\sigma=0.690$, and $\sigma_{\mathrm{op}}=0.997$. Thus, compression does not simply degrade all information uniformly; it preferentially removes or weakens boundary metadata.
+
+\begin{table}[t]
+\centering
+\caption{Compression trajectory on \texttt{gpt-5-mini}. Negative $\rho$ indicates handoff expansion relative to the upstream transcript.}
+\label{tab:sigma_rho_compact}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Condition} & \boldmath$\rho$ & \boldmath$\sigma$ & \boldmath$\sigma_{\mathrm{op}}$ \\
+\midrule
+\texttt{structured\_schema}             & -7.536 & 0.938 & 0.990 \\
+\texttt{sectioned\_template}            & -3.103 & 0.984 & 1.000 \\
+\texttt{free\_text}                     & -1.989 & 0.976 & 1.000 \\
+\texttt{preserve\_markers\_instruction} & -1.006 & 0.959 & 0.993 \\
+\texttt{compressed\_free\_text}         & -0.362 & 0.916 & 0.990 \\
+\texttt{hard\_budget\_compressed}       &  0.077 & 0.919 & 0.990 \\
+\texttt{hard\_budget\_compressed\_v2}   &  0.454 & 0.690 & 0.997 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection{RQ2: Context Dump Becomes Final Leakage Without Strong Boundaries}
+\label{sec:results_phase2b}
+
+The Phase~2 handoff pilot revealed many context dumps: sensitive facts were carried forward inside internal handoff artifacts, often in fields labelled as local context or content not to forward. Phase~2B tests whether such dumped content becomes audience-facing leakage. We construct 12 scenarios with three matched variants: \texttt{no\_dump\_marker}, where the sensitive fact is not forwarded; \texttt{dump\_with\_marker}, where the sensitive fact is forwarded with an explicit boundary rule; and \texttt{dump\_no\_marker}, where the sensitive fact is forwarded without the marker. Each variant is tested under four downstream pressure conditions.
+
+Table~\ref{tab:phase2b_main} shows that the three variants separate cleanly. Data minimization is fully protective in the tested cells: no-dump variants produce 0/48 leaks on both models. Explicit markers are also strongly protective: leakage is 2/48 on GPT and 1/48 on DeepSeek. Without a marker, dumped sensitive context becomes the modal downstream behavior: 48/48 on GPT and 37/48 on DeepSeek.
+
+\begin{table}[t]
+\centering
+\caption{Phase~2B final-leakage counts. Each cell is 12 scenarios $\times$ 4 pressure conditions.}
+\label{tab:phase2b_main}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Variant} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+\texttt{no\_dump\_marker}   & 0 / 48  & 0 / 48  \\
+\texttt{dump\_with\_marker} & 2 / 48  & 1 / 48  \\
+\texttt{dump\_no\_marker}   & 48 / 48 & 37 / 48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:phase2b_pressure} breaks the result down by pressure condition. GPT leaks in every \texttt{dump\_no\_marker} cell. DeepSeek is less saturated but follows the same ordering, with the highest rates under trace and compressed-report prompts. The comparison between \texttt{dump\_with\_marker} and \texttt{dump\_no\_marker} is the key causal contrast: the sensitive content is present in both variants, but the explicit marker is present only in the former.
+
+\begin{table*}[t]
+\centering
+\caption{Phase~2B final leakage by downstream pressure. Cells report leakage / total, with 12 prompts per cell.}
+\label{tab:phase2b_pressure}
+\small
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Variant} & \textbf{neutral} & \textbf{explain reason} & \textbf{audit trace} & \textbf{compressed report} \\
+\midrule
+\multirow{3}{*}{\texttt{gpt-5-mini}}
+ & \texttt{no\_dump\_marker}   & 0/12  & 0/12  & 0/12  & 0/12  \\
+ & \texttt{dump\_with\_marker} & 1/12  & 0/12  & 1/12  & 0/12  \\
+ & \texttt{dump\_no\_marker}   & 12/12 & 12/12 & 12/12 & 12/12 \\
+\midrule
+\multirow{3}{*}{\texttt{deepseek-r1:32b}}
+ & \texttt{no\_dump\_marker}   & 0/12 & 0/12 & 0/12  & 0/12  \\
+ & \texttt{dump\_with\_marker} & 1/12 & 0/12 & 0/12  & 0/12  \\
+ & \texttt{dump\_no\_marker}   & 7/12 & 9/12 & 10/12 & 11/12 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+% ------------------------------------------------------------------
+\subsection{RQ2 Extension: Weak Markers Are Not Enough}
+\label{sec:results_phase2c}
+
+Phase~2C asks whether vague privacy language provides the same protection as an explicit boundary rule. We add \texttt{dump\_weak\_marker}, where the sensitive content is forwarded with language such as ``use discretion'' rather than a concrete instruction not to disclose the fact.
+
+Table~\ref{tab:phase2c_main} shows that weak markers behave much more like no marker than like an explicit marker. Manual labels identify final leakage in 44/48 GPT weak-marker cells and 38/48 DeepSeek weak-marker cells. The calibrated heuristic undercounts these rows because models often paraphrase the sensitive content rather than reproducing an exact alias.
+
+\begin{table}[t]
+\centering
+\caption{Phase~2C final-leakage counts. Weak-marker counts are manual labels; the other variants use the calibrated evaluator.}
+\label{tab:phase2c_main}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Variant} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+\texttt{no\_dump\_marker}   & 0 / 48  & 0 / 48  \\
+\texttt{dump\_with\_marker} & 2 / 48  & 2 / 48  \\
+\texttt{dump\_weak\_marker} & 44 / 48 & 38 / 48 \\
+\texttt{dump\_no\_marker}   & 44 / 48 & 38 / 48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Manual leakage matrix for the \texttt{dump\_weak\_marker} condition by downstream pressure.}
+\label{tab:phase2c_pressure}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Pressure} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+\texttt{neutral}            & 10 / 12 & 8 / 12  \\
+\texttt{explain\_reason}    & 11 / 12 & 12 / 12 \\
+\texttt{audit\_trace}       & 12 / 12 & 9 / 12  \\
+\texttt{compressed\_report} & 11 / 12 & 9 / 12  \\
+\midrule
+Total                       & 44 / 48 & 38 / 48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The implication is direct: once sensitive content has entered downstream state, generic privacy language is not an adequate control. The boundary must be explicit enough for the downstream agent to operationalize.
+
+% ------------------------------------------------------------------
+\subsection{No-Handoff Control: Raw Transcript Access Is Not Automatically Safe}
+\label{sec:results_single_agent_control}
+
+One possible objection is that the downstream leakage results are merely artifacts of multi-agent handoff: perhaps a single model reading the original transcript would respect the user's privacy boundary. We test this with a no-handoff control on the same 12 scenarios. The model receives the upstream information directly and writes the final audience-facing output under the same four pressure conditions. We compare three direct variants: \texttt{direct\_full\_marker}, the original transcript with explicit boundary language; \texttt{direct\_weak\_marker}, operational and sensitive facts with a vague ``use discretion'' note; and \texttt{direct\_no\_marker}, operational and sensitive facts without any boundary rule.
+
+Table~\ref{tab:single_agent_control} shows that raw transcript access is not automatically safe. Even when the original transcript contains explicit privacy language, the model often repeats the protected fact while also stating that it should not be disclosed. The full-marker direct transcript leaks in 20/48 GPT cells and 11/48 DeepSeek cells. Weak and absent boundary variants are much worse, approaching the handoff \texttt{dump\_no\_marker} failure rate.
+
+\begin{table}[t]
+\centering
+\caption{No-handoff single-agent control. Cells report exact-phrase final leakage over 12 scenarios $\times$ 4 pressure conditions.}
+\label{tab:single_agent_control}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Variant} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+\texttt{direct\_full\_marker} & 20 / 48 & 11 / 48 \\
+\texttt{direct\_weak\_marker} & 31 / 48 & 33 / 48 \\
+\texttt{direct\_no\_marker}   & 43 / 48 & 36 / 48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This control changes the interpretation in an important way. The result is not that multi-agent handoff is always worse than a single-agent transcript. Rather, boundary \emph{representation} controls risk. The hand-authored \texttt{dump\_with\_marker} handoff, which reformulates the privacy boundary as an explicit downstream rule, leaks only 2/48 times on GPT and 1/48 on DeepSeek. The raw transcript with natural-language privacy language leaks substantially more. Handoffs can therefore be either harmful or protective: harmful when they drop or weaken boundary metadata, protective when they convert privacy preferences into explicit operational constraints.
+
+% ------------------------------------------------------------------
+\subsection{RQ3: Prompt-Only Mitigation Fails, Enforcement Helps}
+\label{sec:results_mitigation}
+
+Experiment~5 evaluates whether prompt-only handoff formats can reduce downstream leakage in generated handoffs. We generate 72 handoffs from 12 scenarios under six mitigation conditions, then test each handoff under four downstream pressure conditions, yielding 288 downstream prompts. Table~\ref{tab:exp5_mitigation} shows that prompt-only mitigation is unreliable: the overall leakage rate is 58/288 (0.201), and the nominally safe structured schema is not safer than the unsafe schema.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~5 prompt-only mitigation on \texttt{gpt-5-mini}. Counts are final downstream leakage.}
+\label{tab:exp5_mitigation}
+\small
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Handoff condition} & \textbf{Leakage} \\
+\midrule
+\texttt{free\_text}                    & 8 / 48  \\
+\texttt{minimality\_instruction}        & 8 / 48  \\
+\texttt{preserve\_markers\_instruction} & 10 / 48 \\
+\texttt{sectioned\_template}            & 9 / 48  \\
+\texttt{structured\_schema\_safe}       & 11 / 48 \\
+\texttt{structured\_schema\_unsafe}     & 12 / 48 \\
+\midrule
+Overall                                & 58 / 288 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Manual inspection explains the failure: prompt-only ``safe'' schema instructions often still copy sensitive facts into downstream state. In our generated handoffs, the safe schema carried sensitive context in 10/12 cases, so the downstream agent could still recover and disclose it.
+
+Experiment~5B therefore adds a deterministic validation/redaction step before downstream use. The redactor removes scenario-specific disallowed phrases and aliases from generated handoffs; it modified 46/72 handoffs with 145 total phrase replacements. Table~\ref{tab:exp5b_redaction} reports two metrics: exact-phrase leakage over all 288 downstream prompts, and manual paraphrase/category leakage in the high-risk structured-schema cells. Exact-phrase leakage falls to 0/288 on both GPT and DeepSeek, but the manual audits show that phrase-based enforcement is incomplete: paraphrased sensitive categories still appear in 5/40 GPT high-risk rows and 14/48 DeepSeek high-risk rows.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~5B enforced redaction. Exact-phrase leakage is eliminated, but manual audits reveal remaining paraphrase/category leakage.}
+\label{tab:exp5b_redaction}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Metric} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+Exact-phrase leakage, all prompts & 0 / 288 & 0 / 288 \\
+High-risk manual leakage & 5 / 40 & 14 / 48 \\
+\midrule
+\texttt{structured\_schema\_safe}, manual & 3 / 22 & 7 / 24 \\
+\texttt{structured\_schema\_unsafe}, manual & 2 / 18 & 7 / 24 \\
+\texttt{audit\_trace}, manual & 4 / 20 & 9 / 24 \\
+\texttt{compressed\_report}, manual & 1 / 20 & 5 / 24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The mitigation result should therefore be read as a partial success. Enforcement prevents direct propagation of the protected strings across two model families, but phrase-level redaction is not a complete privacy mechanism. Many residual failures are semantic: the output omits the exact phrase but reveals the category, such as accommodation paperwork, family/location context, employment status, or a customer safety explanation.
+
+% ------------------------------------------------------------------
+\subsection{Task Utility Is Preserved}
+\label{sec:results_task_success}
+
+Finally, we verify that the privacy effects are not simply artifacts of task collapse. We use a judge-based task-success scorer that checks whether the downstream output preserves the required operational facts and avoids contradictions. Table~\ref{tab:task_success} reports high task success across Phase~2 and the mitigation experiments.
+
+\begin{table}[t]
+\centering
+\caption{Judge-based task-success rates.}
+\label{tab:task_success}
+\small
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Experiment} & \textbf{Task success} \\
+\midrule
+Phase~2 baseline & 0.969 [0.950, 0.986] \\
+Experiment~5 prompt-only mitigation & 0.997 [0.991, 1.000] \\
+Experiment~5B enforced redaction & 0.998 [0.995, 1.000] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Together, the results support four claims. First, handoff compression selectively harms boundary metadata more than operational content. Second, context dump matters because dumped sensitive content becomes final leakage when explicit markers are absent or weak. Third, the no-handoff control shows that raw transcript access with natural-language privacy language is also unsafe; what matters is whether the boundary is represented as an operational constraint. Fourth, mitigation requires enforcement rather than prompt-only schema instructions: redaction prevents exact string propagation, but stronger semantic redaction is needed to close paraphrase-level leaks.

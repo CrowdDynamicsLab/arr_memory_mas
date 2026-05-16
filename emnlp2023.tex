@@ -1,0 +1,132 @@
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt]{article}
+
+% Remove the "review" option to generate the final version.
+\usepackage[review]{EMNLP2023}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+\usepackage{inconsolata}
+
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+
+\usepackage{lineno}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{xcolor}         % colors
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{xspace} 
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{multirow}\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}} % check mark
+\newcommand{\xmark}{\ding{55}} % cross mark
+
+\usepackage[capitalize,noabbrev]{cleveref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Facts Without Rules: Boundary Metadata Collapse in Multi-Agent LLM Handoffs}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{First Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\\And
+  Second Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\}
+
+\begin{document}
+\maketitle
+
+\input{sec/00abstract}
+\input{sec/01introduction}
+\input{sec/02related}
+\input{sec/03method}
+\input{sec/04Experiment}
+\input{sec/05results}
+\input{sec/06conclusions}
+\section*{Limitations}
+ 
+\paragraph{Model coverage.} We evaluate two model families: \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}. Both are strong instruction-tuned models, and the second is reasoning-tuned, but two families is the floor for replication rather than the ceiling. Whether summary collapse and its dose-response on marker explicitness generalize to other families (e.g., Llama, Claude, Gemini) and to smaller production-scale models (under 10B parameters) is an open empirical question. Replication on a third open-source family is planned for the camera-ready.
+ 
+\paragraph{Synthetic transcripts and synthetic audiences.} Both the upstream transcripts and the downstream ``audiences'' in our experiments are synthetic: scenarios are hand-authored, and downstream agents are themselves LLMs. We do not measure whether real users would perceive a leaked handoff as a privacy violation in deployment, nor do we measure whether real production handoffs in deployed agent systems show the same selective fragility we observe. The framing argument from Communication Privacy Management is theoretical; the empirical leakage harm in our experiments is mediated entirely by LLM behavior, not by human stakeholders. Production-trace validation and user studies of perceived harm are necessary before any deployment-level claim.
+
+\paragraph{Author-conducted manual audits.} The leakage detector calibration (144 rows), the $\sigma$-judge audit (100 rows), the weak-marker audits (50 rows per model), and the E7 redacted-output audit were all conducted by the authors rather than by independent annotators. Inter-annotator agreement numbers are therefore not reported. Within-author labeling is appropriate as a calibration check for our specific evaluator and judge, but a standalone human-subjects dataset would require an independent annotator pool.
+ 
+\paragraph{Distinction from summarization faithfulness.} A reader familiar with the abstractive-summarization-faithfulness literature \citep{maynez2020faithfulness} may ask whether $\sigma$ rediscovers known fidelity-loss patterns. We conducted an exploratory probe scoring E1 \texttt{free\_text} handoffs with an off-the-shelf faithfulness model (MiniCheck), but the model's distribution on our compressed dialog-style handoffs was too narrow to yield a clean high-faithfulness-low-$\sigma$ contrast --- a domain-mismatch problem rather than evidence of equivalence. The decoupling result in Section~\ref{sec:results_rq1} provides circumstantial evidence that boundary survival and operational survival are distinct axes; a dedicated comparison of $\sigma$ to faithfulness metrics calibrated for short multi-agent handoffs remains future work.
+ 
+\paragraph{Language.} All scenarios are in English. Whether the dose-response pattern in marker explicitness, in particular the L1$\to$L2 transition, replicates in languages with different politeness conventions or modal verb systems is an open question.
+ 
+\section*{Ethics Statement}
+
+This work studies privacy failure modes in multi-agent LLM coordination. We outline three categories of ethical consideration.
+
+\paragraph{Use of data.} All scenarios in the testbed are hand-authored synthetic vignettes. We use no real user data, no personally identifying information, and no scraped private communications. The ``sensitive facts'' in each scenario (e.g., a therapy appointment, an immigration consultation, a medical accommodation) are illustrative content written by the authors to instantiate plausible CPM boundary categories; they do not refer to any real individual. Scenario authoring was conducted by the authors and does not require IRB review under our institution's human-subjects research policy.
+
+\paragraph{Dual-use considerations.} A paper that catalogues how multi-agent systems leak private information could in principle inform an adversary. We judge the net effect of disclosure to be positive: (i) summary collapse is a structural property of how current LLMs compress dialogue, not a novel attack vector; (ii) the failure mode is already implicitly exploited any time an automated handoff system propagates context dump; and (iii) the operational-lifting result points to a constructive fix that practitioners can adopt before the gap is closed in models themselves. Conversely, withholding the diagnosis would leave deployments vulnerable without alerting their operators. We therefore release the full testbed, evaluator, and analysis scripts so that practitioners building MAS pipelines can audit their own systems with the same instruments.
+
+\paragraph{Model and compute use.} Experiments use \texttt{gpt-5-mini} through the OpenAI API and \texttt{deepseek-r1:32b} through a campus inference endpoint. We report inference settings (temperature 0.1) and prompt counts (Section~\ref{sec:setup}) sufficient for reproduction. We do not fine-tune any model and do not train new model weights, so the carbon and compute footprint of our work consists solely of inference. No human subjects participated in the experiments themselves; the manual labeling described in Section~\ref{sec:results_eval} and Appendix~\ref{app:manual} was conducted by the authors and treated as a methodological audit, not as a labeled-data collection.
+
+\paragraph{Broader impact.} The framing argument from Communication Privacy Management is normative: people maintain boundaries around private information and license its disclosure under specific use conditions. We make the analogous claim for MAS only at the mechanistic level --- handoffs preserve some propositions and weaken others. Whether a given leak constitutes a violation in deployment depends on stakeholders and context the testbed cannot capture. Deployment-level claims about harm to specific user populations would require field studies we have not conducted.
+
+\bibliography{references}
+\bibliographystyle{acl_natbib}
+\newpage
+\appendix
+
+\input{sec/07appendix}
+
+
+\end{document}

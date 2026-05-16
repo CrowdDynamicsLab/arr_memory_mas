@@ -1,0 +1,72 @@
+\section{Experimental Setup}
+\label{sec:setup}
+\Cref{sec:method} defines the coordination testbed, the survival and leakage metrics, and the experiment families. This section gives the run-time specification: research-question mapping, models, prompt counts, leakage definition, evaluator protocol, and reporting conventions. Implementation detail beyond what is needed to reproduce the main results is deferred to~\cref{app:dataset} and~\cref{app:run}.
+ 
+\subsection{Research Questions and Experiments}
+\label{sec:rqs}
+ 
+The study is organized around three questions:
+\begin{itemize}
+  \item \textbf{RQ1.} Does compression selectively reduce $\sigma$
+  while $\sigma_{\mathrm{op}}$ remains stable?
+  \item \textbf{RQ2.} When sensitive content is forwarded, does the
+  strength of the boundary marker causally determine whether it becomes
+  audience-facing leakage?
+  \item \textbf{RQ3.} Do lightweight mitigations prevent leakage while
+  preserving task utility?
+\end{itemize}
+\Cref{tab:rq-map} maps each experiment to the question it answers and the model coverage we use.
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    Experiment & RQ & Models \\
+    \midrule
+    E1 Baseline handoff       & RQ1 & GPT, DeepSeek \\
+    E2 Compression stress     & RQ1 & GPT, DeepSeek \\
+    E3 Controlled context dump& RQ2 & GPT, DeepSeek \\
+    E4 Weak markers           & RQ2 & GPT, DeepSeek \\
+    E5 No-handoff control     & RQ2 & GPT, DeepSeek \\
+    E6 Prompt-only mitigation & RQ3 & GPT, DeepSeek \\
+    E7 Enforced redaction     & RQ3 & GPT, DeepSeek \\
+    E8 Marker-strength gradient & RQ2 & GPT, DeepSeek \\
+    E9 Operationalized probe  & RQ3 & GPT, DeepSeek \\
+    \bottomrule
+  \end{tabular}
+  \caption{Mapping from experiments to research questions and model
+  coverage. ``GPT'' denotes \texttt{gpt-5-mini}; ``DeepSeek'' denotes
+  \texttt{deepseek-r1:32b}.}
+  \label{tab:rq-map}
+\end{table}
+ 
+\subsection{Models}
+\label{sec:models}
+The primary model is \texttt{gpt-5-mini} \citep{singh2025openai}; the cross-model replication is \texttt{deepseek-r1:32b} \citep{deepseekai2025deepseekr1incentivizingreasoningcapability}. All runs use temperature 0.1, and we use matched prompts across models. GPT-5-mini was used for development and evaluator calibration; DeepSeek-R1-32B is held out as a replication target.
+ 
+\subsection{Prompts and Counts}
+\label{sec:counts}
+E1 uses a stratified 180-prompt subset balanced across the 36 scenarios, five handoff conditions, and four handoff surfaces. E2 adds two hard-budget conditions (40-word and 25-word) over all 36 scenarios. E3 yields $12 \times 3 \times 4 = 144$ downstream prompts per model; E4 yields $12 \times 4 \times 4 = 192$; E8 extends the marker-strength axis to five levels (L0--L4) for a $12 \times 5 \times 4 = 240$ design per model (overlapping with E3/E4 endpoints, so 96 new prompts per model); E5 yields $12 \times 3 \times 4 = 144$ direct prompts per model. E6 evaluates 72 generated handoffs $\times\,4$ downstream pressures $= 288$ downstream prompts per model. E7 reruns the same 288 downstream prompts on redacted handoffs. E9 supplies a hand-constructed typed audience-allowlist schema for the 12 E3 scenarios and runs downstream evaluation under the four pressures ($12 \times 4 = 48$ prompts per model). Per-condition prompt manifests and the stratification scheme appear in~\cref{app:run}.
+ 
+\subsection{What We Count as Leakage}
+\label{sec:leak-def}
+We adopt a strict definition: a downstream output is counted as \emph{final leakage} only if it discloses the sensitive content to the intended audience-facing channel. Sensitive content that appears only in an internal handoff, trace, or context section is recorded as \emph{context dump} but not as final leakage. This distinction is central to the causal contrasts in E3--E5: context dump measures boundary failure inside the MAS, while final leakage measures disclosure to the downstream audience.
+ 
+\subsection{Evaluator and Manual Validation}
+\label{sec:evaluator}
+ 
+\paragraph{Leakage detection.}
+For each downstream output, the calibrated evaluator uses word-boundary matching against scenario-specific disallowed phrases and aliases, with overly broad aliases filtered out. This strict exact/alias detector is appropriate for the E3 causal contrast, where the sensitive facts are known and manually audited.
+
+\paragraph{Manual validation.}
+We validate both the leakage detector and the $\sigma$ judge against human labels. For the leakage detector, all 144 \texttt{gpt-5-mini} E3 downstream outputs are manually labeled, and the calibrated evaluator achieves precision 1.0, recall 1.0, and accuracy 1.0 on those labels; we treat this as calibration for the matched E3 setup. For the $\sigma$ judge, we stratify-sample 50 (handoff, marker) pairs from E1 and manually label each on the four-level rubric; the judge reaches accuracy $0.92$ and Cohen's $\kappa = 0.74$ overall, in the substantial-agreement range under standard interpretation. We treat the judge as a validated instrument for the marker-survival claims that follow. The $\sigma$ judge runs at temperature 0 using GPT5.5 Thinking; manual labelers were blinded to condition. Manual audits were conducted by the authors and are intended as validation checks for the reported detector behavior rather than as a standalone human-subjects dataset.
+ 
+\paragraph{Paraphrase audits.}
+E4 weak-marker outputs and E7 redaction outputs are more likely to contain paraphrase or category-level leakage that exact-string detection misses. We supplement the detector with focused manual audits for those settings, reported in~\Cref{sec:results}.
+ 
+\paragraph{Task success.}
+Privacy improvements are useful only if the downstream task still succeeds. We score task success with a judge-based evaluator that checks whether the downstream output preserves required operational facts and avoids contradictions. Task success is reported for E1, E6, and E7.
+ 
+\subsection{Reporting}
+\label{sec:reporting}
+We report means with bootstrap 95\% confidence intervals over scenarios. Per-condition tables and per-marker-category breakdowns are deferred to~\Cref{app:results}. Unless otherwise stated, every cell is averaged across both models; model-specific results are reported in~\Cref{sec:results} and~\Cref{app:results}.

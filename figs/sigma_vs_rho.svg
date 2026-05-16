@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="520" viewBox="0 0 860 520">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;font-size:13px;fill:#1f2933}.axis{stroke:#28323c;stroke-width:1.2}.grid{stroke:#d9dee5;stroke-width:1}.sigma{stroke:#1f77b4;fill:none;stroke-width:3}.op{stroke:#d62728;fill:none;stroke-width:3}.ci{stroke-width:1.8;opacity:.45}.label{font-size:12px;fill:#334155}.title{font-size:16px;font-weight:700}</style>
+<text class="title" x="78" y="22">Boundary vs operational survival under compression</text>
+<line class="grid" x1="78.00" y1="406.83" x2="832.00" y2="406.83"/>
+<text x="70.00" y="410.83" text-anchor="end">0.5</text>
+<line class="grid" x1="78.00" y1="336.48" x2="832.00" y2="336.48"/>
+<text x="70.00" y="340.48" text-anchor="end">0.6</text>
+<line class="grid" x1="78.00" y1="266.14" x2="832.00" y2="266.14"/>
+<text x="70.00" y="270.14" text-anchor="end">0.7</text>
+<line class="grid" x1="78.00" y1="195.79" x2="832.00" y2="195.79"/>
+<text x="70.00" y="199.79" text-anchor="end">0.8</text>
+<line class="grid" x1="78.00" y1="125.45" x2="832.00" y2="125.45"/>
+<text x="70.00" y="129.45" text-anchor="end">0.9</text>
+<line class="grid" x1="78.00" y1="55.10" x2="832.00" y2="55.10"/>
+<text x="70.00" y="59.10" text-anchor="end">1.0</text>
+<line class="grid" x1="77.62" y1="34.00" x2="77.62" y2="442.00"/>
+<text x="77.62" y="464.00" text-anchor="middle">-7.56</text>
+<line class="grid" x1="228.79" y1="34.00" x2="228.79" y2="442.00"/>
+<text x="228.79" y="464.00" text-anchor="middle">-5.95</text>
+<line class="grid" x1="379.96" y1="34.00" x2="379.96" y2="442.00"/>
+<text x="379.96" y="464.00" text-anchor="middle">-4.34</text>
+<line class="grid" x1="530.20" y1="34.00" x2="530.20" y2="442.00"/>
+<text x="530.20" y="464.00" text-anchor="middle">-2.74</text>
+<line class="grid" x1="681.37" y1="34.00" x2="681.37" y2="442.00"/>
+<text x="681.37" y="464.00" text-anchor="middle">-1.13</text>
+<line class="grid" x1="831.60" y1="34.00" x2="831.60" y2="442.00"/>
+<text x="831.60" y="464.00" text-anchor="middle">0.47</text>
+<line class="axis" x1="78.00" y1="442.00" x2="832.00" y2="442.00"/>
+<line class="axis" x1="78.00" y1="34.00" x2="78.00" y2="442.00"/>
+<line class="ci" stroke="#1f77b4" x1="79.88" y1="123.49" x2="79.88" y2="79.53"/>
+<line class="ci" stroke="#d62728" x1="83.88" y1="74.64" x2="83.88" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="496.11" y1="86.37" x2="496.11" y2="55.10"/>
+<line class="ci" stroke="#d62728" x1="500.11" y1="55.10" x2="500.11" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="600.70" y1="84.41" x2="600.70" y2="62.43"/>
+<line class="ci" stroke="#d62728" x1="604.70" y1="55.10" x2="604.70" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="692.99" y1="110.30" x2="692.99" y2="62.43"/>
+<line class="ci" stroke="#d62728" x1="696.99" y1="69.76" x2="696.99" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="753.53" y1="162.57" x2="753.53" y2="77.09"/>
+<line class="ci" stroke="#d62728" x1="757.53" y1="74.64" x2="757.53" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="794.70" y1="151.35" x2="794.70" y2="81.97"/>
+<line class="ci" stroke="#d62728" x1="798.70" y1="74.64" x2="798.70" y2="55.10"/>
+<line class="ci" stroke="#1f77b4" x1="830.12" y1="350.66" x2="830.12" y2="200.68"/>
+<line class="ci" stroke="#d62728" x1="834.12" y1="62.43" x2="834.12" y2="55.10"/>
+<polyline class="sigma" points="79.88,99.07 496.11,66.34 600.70,72.20 692.99,83.93 753.53,114.21 794.70,111.77 830.12,272.98"/>
+<polyline class="op" points="79.88,62.43 496.11,55.10 600.70,55.10 692.99,59.99 753.53,62.43 794.70,62.43 830.12,57.55"/>
+<circle cx="79.88" cy="99.07" r="4.8" fill="#1f77b4"/>
+<rect x="79.88" y="58.43" width="8" height="8" fill="#d62728"/>
+<text class="label" x="86.88" y="115.07">schema</text>
+<circle cx="496.11" cy="66.34" r="4.8" fill="#1f77b4"/>
+<rect x="496.11" y="51.10" width="8" height="8" fill="#d62728"/>
+<text class="label" x="503.11" y="82.34">sections</text>
+<circle cx="600.70" cy="72.20" r="4.8" fill="#1f77b4"/>
+<rect x="600.70" y="51.10" width="8" height="8" fill="#d62728"/>
+<text class="label" x="607.70" y="88.20">free</text>
+<circle cx="692.99" cy="83.93" r="4.8" fill="#1f77b4"/>
+<rect x="692.99" y="55.99" width="8" height="8" fill="#d62728"/>
+<text class="label" x="699.99" y="99.93">preserve</text>
+<circle cx="753.53" cy="114.21" r="4.8" fill="#1f77b4"/>
+<rect x="753.53" y="58.43" width="8" height="8" fill="#d62728"/>
+<text class="label" x="760.53" y="130.21">bullets</text>
+<circle cx="794.70" cy="111.77" r="4.8" fill="#1f77b4"/>
+<rect x="794.70" y="58.43" width="8" height="8" fill="#d62728"/>
+<text class="label" x="801.70" y="127.77">40w</text>
+<circle cx="830.12" cy="272.98" r="4.8" fill="#1f77b4"/>
+<rect x="830.12" y="53.55" width="8" height="8" fill="#d62728"/>
+<text class="label" x="837.12" y="288.98">25w</text>
+<text x="455.00" y="502.00" text-anchor="middle">Compression ratio ρ = 1 - |handoff| / |upstream transcript|</text>
+<text transform="translate(20,238.00) rotate(-90)" text-anchor="middle">Mean survival score</text>
+<line x1="615.00" y1="48" x2="655.00" y2="48" stroke="#1f77b4" stroke-width="3"/><text x="664.00" y="52">Boundary survival σ</text>
+<line x1="615.00" y1="70" x2="655.00" y2="70" stroke="#d62728" stroke-width="3"/><text x="664.00" y="74">Operational survival σ_op</text>
+</svg>

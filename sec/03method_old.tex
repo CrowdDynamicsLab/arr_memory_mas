@@ -1,0 +1,101 @@
+\section{Method}
+\label{sec:method}
+We study summary collapse through a controlled benchmark, \textbf{BOUND-Handoff}, designed to isolate what happens to boundary metadata when an upstream multi-agent interaction is transformed into a handoff artifact that a downstream agent consumes. Each scenario specifies an upstream transcript, operational facts the downstream agent needs in order to act, boundary markers that constrain how sensitive facts may be used, and one or more downstream tasks.
+
+The benchmark distinguishes two outcomes that prior work often conflate: a \emph{context dump} occurs when sensitive content appears in an internal handoff artifact, trace, or context field, with or without its governing marker. \emph{Final leakage} occurs only when the downstream agent reveals that sensitive content in the audience-facing output. Context dump is therefore a routing failure and a precursor to disclosure, but final leakage is the externally observable harm.
+
+\subsection{The BOUND-Handoff Dataset}
+\label{sec:dataset}
+
+\paragraph{Scenarios and domains.}
+The current release contains 36 multi-agent coordination scenarios spanning where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario contains (i) an upstream transcript in which a user or upstream agent discloses a mixture of operational facts and sensitive context, (ii) explicit boundary markers that license or constrain how the sensitive content may be used downstream, (iii) handoff prompts that ask an intermediate agent to produce a handoff artifact under a given condition, and (iv) a downstream task in which a second agent must act on the handoff artifact. Scenarios are written so that the operational facts are useful or necessary for the downstream task while the sensitive context is not necessary to disclose to the final audience.
+
+\paragraph{Boundary markers.}
+We instrument each scenario with boundary metadata drawn from Communication Privacy Management. The marker categories are \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). Each marker is anchored to a specific operational or sensitive proposition in the upstream transcript, so we can later check whether it survives the handoff step.
+
+\paragraph{Handoff surfaces.}
+We study four handoff surfaces that cover common ways one agent's output becomes another agent's input: \textbf{explicit\_summary} (an intermediate agent produces a written summary of the upstream interaction), \textbf{forwarding\_to\_summary} (the agent forwards the upstream transcript to a summarizer), \textbf{memory\_replay} (the upstream interaction is stored and later replayed), and \textbf{report\_writer} (the upstream interaction is consumed by an agent whose role is to draft an audience-facing report).
+
+\paragraph{Handoff conditions.}
+Experiment~1 uses five handoff conditions that vary compression pressure and marker support: \textbf{free\_text} (open-ended summarization), \textbf{compressed\_free\_text} (free-text summarization with a short length cap), \textbf{preserve\_markers\_instruction} (free-text plus an explicit instruction to preserve boundary metadata), \textbf{sectioned\_template} (a template that separates operational facts from local context), and \textbf{structured\_schema} (a typed schema with explicit fields for facts and markers). These conditions test marker survival under different handoff formats; they should not be read as complete privacy mitigations, because a format can preserve markers while still carrying sensitive content into downstream state.
+
+The full design contains $36~\text{scenarios} \times 4~\text{surfaces} \times 5~\text{conditions} = 720$ possible handoff prompts. The reported Experiment~1 uses a stratified 180-prompt subset covering all 36 scenarios and all five conditions.
+
+\subsection{Operational Measures}
+\label{sec:measures}
+We introduce three measures to separate how much information is compressed from what kind of information survives.
+
+\paragraph{Boundary-marker survival ($\sigma$).}
+Boundary markers can survive verbatim, survive through paraphrase, be softened into a weaker norm, or disappear. We therefore compute $\sigma$ as a judge-scored average rather than as exact string recall. For each upstream marker $m_i$, an LLM judge compares the marker with the handoff artifact and assigns one of four labels:
+\[
+s_i =
+\begin{cases}
+1.00 & \text{preserved} \\
+0.75 & \text{paraphrased} \\
+0.35 & \text{weakened} \\
+0.00 & \text{absent}.
+\end{cases}
+\]
+
+For a handoff with marker set $M_u$, marker survival is
+\[
+\sigma = \frac{1}{|M_u|}\sum_{m_i \in M_u} s_i.
+\]
+We report $\sigma$ overall, by handoff condition, by surface, and by marker category.
+
+\paragraph{Operational-fact survival ($\sigma_{\mathrm{op}}$).}
+To test whether handoff loss is selective rather than generic, we score operational facts with the same four-level rubric and compute an analogous average, $\sigma_{\mathrm{op}}$. Operational facts include task-relevant times, entities, decisions, owners, and constraints. The core selective-fragility claim is that $\sigma$ falls under compression while $\sigma_{\mathrm{op}}$ remains high.
+
+\paragraph{Compression ratio ($\rho$).}
+We define
+\begin{equation}
+    \rho \;=\; 1 - \frac{|h|}{|u|},
+\end{equation}
+where $|u|$ and $|h|$ are the token lengths of the upstream transcript and the handoff artifact. Positive $\rho$ indicates compression; values near 1 indicate aggressive compression. Negative $\rho$ indicates that the handoff is longer than the upstream transcript, which occurs for templates and schemas that add structure around the original content.
+
+\subsection{Experiment Families}
+\label{sec:experiment_families}
+The empirical study has five experiment families. Together they separate upstream marker survival, downstream leakage, controls, and mitigation.
+
+\paragraph{Handoff survival and compression stress tests.}
+The Experiment~1 baseline evaluates the 180-prompt stratified handoff subset on both models. We compute $\sigma$, $\sigma_{\mathrm{op}}$, task success, and diagnostic breakdowns by handoff condition, surface, and marker category. To make compression pressure explicit, we add two hard-budget stress tests (Experiment~2) over the 36 scenarios: a 40-word compression condition and a stricter 25-word, one-sentence condition. The stress tests are run on both \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}.
+
+\paragraph{Experiment~3: controlled context-dump test.}
+\label{sec:exp3}
+To test whether boundary-metadata loss causes downstream over-disclosure, we isolate marker presence from the summarization step that produced or removed it. We select 12 scenarios and construct three matched handoff variants:
+\begin{itemize}
+    \item \textbf{no\_dump\_marker}: the operational fact plus an explicit boundary constraint, without the sensitive content.
+    \item \textbf{dump\_with\_marker}: the operational fact plus the sensitive content plus an explicit boundary marker.
+    \item \textbf{dump\_no\_marker}: the operational fact plus the sensitive content, with the marker removed.
+\end{itemize}
+Each variant is passed to a downstream agent under four pressure conditions: \textbf{neutral}, \textbf{explain\_reason}, \textbf{audit\_trace}, and \textbf{compressed\_report}. The design is $12 \times 3 \times 4 = 144$ downstream prompts per model. The variants are matched on operational content, so differences in final leakage isolate the effect of sensitive-content forwarding and marker presence.
+
+\paragraph{Experiment~4: weak-marker test.}
+Experiment~4 adds a fourth variant, \textbf{dump\_weak\_marker}, in which the sensitive content is forwarded with vague privacy language such as ``use discretion'' rather than a concrete instruction not to disclose the fact. This tests whether generic caution language functions like an operational boundary rule. The design is $12 \times 4 \times 4 = 192$ downstream prompts per model.
+
+\paragraph{No-handoff single-agent control.}
+To address the possibility that leakage is merely an artifact of multi-agent handoff, we run a no-handoff control on the same 12 scenarios. The model receives the upstream information directly and writes the final audience-facing output under the same four pressure conditions. We compare three variants: \textbf{direct\_full\_marker} (the original transcript with explicit boundary language), \textbf{direct\_weak\_marker}, and \textbf{direct\_no\_marker}. This control asks whether raw transcript access with natural-language privacy language is sufficient, or whether the boundary must be operationalized for the downstream task.
+
+\paragraph{Mitigation.}
+Experiment~6 evaluates prompt-only mitigation on generated handoffs. We generate 72 handoffs from 12 scenarios under six prompt-only handoff conditions, then evaluate each handoff under four downstream pressures, yielding 288 downstream prompts per model. Experiment~7 adds a deterministic validation/redaction step before downstream use. The redactor removes scenario-specific disallowed phrases and aliases from generated handoffs, then we rerun downstream evaluation on both \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}. We separately audit high-risk rows for paraphrase/category leakage because phrase-level redaction can remove exact strings while preserving semantically identifying categories.
+
+\subsection{Models}
+\label{sec:models}
+
+The primary model is \texttt{gpt-5-mini}~\cite{singh2025openai} and the replication model is \texttt{deepseek-r1:32b}~\cite{deepseekai2025deepseekr1incentivizingreasoningcapability}. All runs use temperature $0.1$. 
+Model coverage differs by experiment family: Experiments~1--4, the no-handoff control, Experiment~6, and Experiment~7 are run on both model families. GPT-5-mini is the primary model used for development and calibration; DeepSeek-R1-32B is used as a cross-model replication. We use matched prompts across models whenever both are run.
+
+\subsection{Evaluator and Validation}
+\label{sec:evaluator}
+
+\paragraph{Leakage detection.}
+For each downstream output, we determine whether sensitive content from the upstream transcript has reaches the audience-facing output. The calibrated evaluator uses word-boundary matching against scenario-specific disallowed phrases and aliases, with overly broad aliases filtered out. This strict exact/alias detector is appropriate for the main Experiment~3 causal contrast, where the sensitive facts are known and manually audited. For settings where paraphrase is likely, we supplement the detector with targeted manual audit.
+
+\paragraph{Manual validation and audits.}
+We manually label all 144 \texttt{gpt-5-mini} Experiment~3 downstream outputs. Against these labels, the calibrated evaluator achieves precision $1.0$, recall $1.0$, and accuracy $1.0$. We treat this as calibration for the matched Experiment~3 setup, not as a universal guarantee. Experiment~4 weak-marker outputs and Experiment~7 redaction outputs are more likely to contain paraphrase/category leakage, so we report focused manual audits for those settings in~\cref{sec:results_eval}.
+
+\paragraph{Task success.}
+Privacy improvements are useful only if the downstream task still succeeds. We therefore score task success with a judge-based evaluator that checks whether the downstream output preserves required operational facts and avoids contradictions. Task success is reported for Experiment~1, Experiment~6 prompt-only mitigation, and Experiment~7 enforced redaction.
+
+\paragraph{What we count as leakage.}
+We adopt a strict definition: a downstream output is counted as final leakage only if it discloses the sensitive content to the intended audience-facing channel. Sensitive content that appears only in an internal handoff, trace, or context section is recorded as context dump but not as final leakage. This distinction is central to our analysis: context dump measures boundary failure inside the MAS, while final leakage measures disclosure to the downstream audience.

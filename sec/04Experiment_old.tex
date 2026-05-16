@@ -1,0 +1,22 @@
+\section{Experimental Setup }
+\label{sec:experiments}
+\Cref{sec:method} defines BOUND-Handoff, the survival and leakage metrics, and the experiment families. This section specifies how we run and report the experiments. We use paper-facing experiment names throughout the remainder of the paper; the original run names appear only in released artifacts.
+
+
+\subsection{Characterization (RQ1)}
+\label{sec:exp_char}
+
+The first experiment tests whether handoff loss is \emph{selective} with respect to boundary metadata. We run the full Phase~2 sweep---scenarios crossed with handoff surfaces and handoff conditions---and, for each (scenario, surface, condition) cell, compute boundary-marker survival $\sigma$, compression ratio $\rho$, and the operational-fact analogue $\sigma_{\text{op}}$. We report $\sigma$ and $\sigma_{\text{op}}$ both globally and broken down by the four marker categories (audience, ownership, hedge, caveat). The diagnostic comparison is the joint trajectory of $\sigma$ and $\sigma_{\text{op}}$ as $\rho$ increases: a uniform decline in both quantities would indicate that handoff loss is generic, while a sharper decline in $\sigma$ than in $\sigma_{\text{op}}$ would indicate that compression is doing structurally different work on marker content than on operational content.
+
+\subsection{Controlled Downstream Test (RQ2)}
+\label{sec:exp_causal}
+
+The second experiment tests whether the loss of boundary markers is \emph{causally} responsible for downstream over-disclosure. We use the controlled design from Section~\ref{sec:phase2b}: 12 scenarios, three handoff variants matched on operational content (\textbf{no\_dump\_marker}, \textbf{dump\_with\_marker}, \textbf{dump\_no\_marker}), and four downstream pressure conditions (\textbf{neutral}, \textbf{explain\_reason}, \textbf{audit\_trace}, \textbf{compressed\_report}), yielding 144 downstream prompts per model. For each prompt we record whether the downstream output discloses the sensitive content to the audience-facing channel, using the calibrated evaluator described in Section~\ref{sec:evaluator}. The primary contrast is between \textbf{dump\_with\_marker} and \textbf{dump\_no\_marker}, which are identical in sensitive content and differ only in the presence of an explicit boundary marker. Any difference in downstream leakage between these two conditions is therefore attributable to marker presence, not to upstream summarization style, scenario content, or downstream prompt phrasing.
+
+\subsection{Mitigation by Structured Handoff (RQ3)}
+\label{sec:exp_mitigation}
+
+The third experiment tests whether a lightweight structural intervention can preserve marker survival without sacrificing task success. We compare the five handoff conditions from Section~\ref{sec:dataset}---\textbf{free\_text}, \textbf{compressed\_free\_text}, \textbf{preserve\_markers\_instruction}, \textbf{sectioned\_template}, and \textbf{structured\_schema}---on three quantities: (i) marker survival $\sigma$, the measure of interest; (ii) the operational-fact analogue $\sigma_{\text{op}}$, to verify that any improvement in $\sigma$ is not bought by simply preserving more content overall; and (iii) downstream \emph{task success}, defined as whether the downstream agent correctly acts on the operational facts in the handoff. We measure task success with a rule-based check against each scenario's gold action so that strong marker survival cannot be achieved trivially by a refusal-prone agent that produces no actionable output. The intended comparison is whether \textbf{structured\_schema}---in which each fact is paired with a typed marker field---improves $\sigma$ relative to \textbf{free\_text} while matching it on task success.
+
+\paragraph{Reporting.}
+For all three experiments we report means with bootstrap 95\% confidence intervals over scenarios. Per-condition tables and per-marker-category breakdowns are deferred to Appendix~\ref{app:full_results}. Unless otherwise stated, every cell is averaged across both models; model-specific results are reported in Section~\ref{sec:results} and Appendix~\ref{app:per_model}.
