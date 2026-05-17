@@ -699,51 +699,6 @@ Together with the main E9 result, this stress test clarifies the open engineerin
 
 % Taken together with the main E9 result, this stress test clarifies the open engineering problem. Gold-derived allowlists show that downstream agents can act on operationalized boundaries when those boundaries are correct; corrupted allowlists show that this protection is brittle to extraction and representation errors. The remaining challenge is therefore not simply to add a schema around a handoff, but to generate, validate, and enforce correct typed boundary fields from upstream interactions.
 
-\subsection{Statistical and Scoring Robustness}
-\label{app:c10_robustness}
-
-We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
-
-\paragraph{Fisher exact tests.} Table~\ref{tab:app_fisher} reports two-sided Fisher exact $p$-values for the primary {GPT-5-mini} and DeepSeek-R1-32B contrasts.
-
-\begin{table*}[!htbp]
-\centering
-\caption{Fisher exact tests for the main leakage contrasts.}
-\label{tab:app_fisher}
-\small
-\begin{tabular}{@{}llr@{}}
-\toprule
-\textbf{Contrast} & \textbf{Model} & \textbf{Fisher $p$} \\
-\midrule
-E3 dump+marker vs.\ dump-no-marker & \texttt{gpt-5-mini}      & $1.61 \times 10^{-12}$ \\
-E3 dump+marker vs.\ dump-no-marker & \texttt{deepseek-R1-32B} & $1.98 \times 10^{-13}$ \\
-E8 L1 vague vs.\ L2 suggestion     & \texttt{gpt-5-mini}      & $2.13 \times 10^{-9}$  \\
-E8 L1 vague vs.\ L2 suggestion     & \texttt{deepseek-R1-32B} & $4.02 \times 10^{-5}$  \\
-E9 typed allowlist vs.\ E6 overall & \texttt{gpt-5-mini}     & $1.04 \times 10^{-4}$  \\
-E9 typed allowlist vs.\ E6 overall & \texttt{deepseek-R1-32B} & $1.58 \times 10^{-3}$  \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-\paragraph{$\sigma$ weighting robustness.} The selective-collapse pattern is robust to alternative $\sigma$ scoring schemes. Under 25-word compression, boundary-marker survival remains substantially below operational-fact survival under all tested weightings, including binary strict and binary lenient metrics that remove dependence on the original \emph{weakened}-marker score (Table~\ref{tab:app_sigma_weighting}).
-\begin{table}[!htbp]
-\centering
-\caption{$\sigma$ weighting robustness under 25-word compression. Binary strict counts only \emph{preserved} as 1; binary lenient counts preserved and paraphrased as 1.}
-\label{tab:app_sigma_weighting}
-\small
-\begin{tabular}{@{}llccc@{}}
-\toprule
-\textbf{Scheme} & \textbf{Model} & $\sigma$ & $\sigma_{\mathrm{op}}$ & \textbf{Gap} \\
-\midrule
-original        & \texttt{gpt-5-mini}      & 0.690 & 0.997 & $-0.306$ \\
-original        & \texttt{deepseek-R1-32B} & 0.580 & 0.972 & $-0.392$ \\
-binary strict   & \texttt{gpt-5-mini}      & 0.722 & 1.000 & $-0.278$ \\
-binary strict   & \texttt{deepseek-R1-32B} & 0.611 & 0.972 & $-0.361$ \\
-binary lenient  & \texttt{gpt-5-mini}      & 0.750 & 1.000 & $-0.250$ \\
-binary lenient  & \texttt{deepseek-R1-32B} & 0.681 & 1.000 & $-0.319$ \\
-\bottomrule
-\end{tabular}
-\end{table}
 % =====================================================================
 
 \section{Qualitative Failure Examples}

@@ -186,10 +186,10 @@ As shown in~\Cref{tab:e2_stress}, hard compression amplifies the selective-fragi
 % \end{table}
 \subsection{Marker Strength Causally Controls Downstream Leakage (RQ2)}
 \label{sec:results_rq2}
-We construct matched downstream tests in which operational content is held constant and only the boundary treatment varies. E3 contrasts three variants under four pressure conditions: \texttt{no\_dump\_marker} (no sensitive content + marker) leaks 0/48 on two primary models; \texttt{dump\_with\_marker} (sensitive content + explicit marker) leaks 2/48 GPT and 1/48 DeepSeek; \texttt{dump\_no\_marker} (sensitive content, marker removed) leaks 48/48 and 37/48. E4 adds \texttt{dump\_weak\_marker} (``use discretion''), which leaks 44/48 GPT and 38/48 DeepSeek --- nearly indistinguishable from no marker. Both contrasts are highly significant under Fisher's exact test (\Cref{app:c10_robustness}); per-pressure breakdowns confirming uniformity across pressures are in~\Cref{app:e3,app:e4}.
+We construct matched downstream tests in which operational content is held constant and only the boundary treatment varies. E3 contrasts three variants under four pressure conditions: \texttt{no\_dump\_marker} (no sensitive content + marker) leaks 0/48 on two primary models; \texttt{dump\_with\_marker} (sensitive content + explicit marker) leaks 2/48 GPT and 1/48 DeepSeek; \texttt{dump\_no\_marker} (sensitive content, marker removed) leaks 48/48 and 37/48. E4 adds \texttt{dump\_weak\_marker} (``use discretion''), which leaks 44/48 GPT and 38/48 DeepSeek --- nearly indistinguishable from no marker. Both contrasts are highly significant under Fisher's exact test (\Cref{sec:results_robustness}); per-pressure breakdowns confirming uniformity across pressures are in~\Cref{app:e3,app:e4}.
 
 \paragraph{Marker strength: dose-response.}
-E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague hedge ``use discretion,'' L2 soft suggestion ``please consider not disclosing,'' L3 explicit constraint ``X is confidential,'' L4 imperative ``do not disclose X''), holding all other content constant. \Cref{tab:marker_gradient} shows the curve is sharply non-linear: vague hedges still leak 35/48 GPT and 24/48 DeepSeek, while soft suggestions drop leakage to 6/48 and 5/48. Explicit constraints and hard imperatives are nearly equivalent. The transition between L1 and L2 is the load-bearing one --- protection comes from the marker being readable as an operational instruction, not from the use of privacy-sounding language; the L1$\to$L2 drop is significant on {GPT-5-mini} and DeepSeek-R1-32B (\Cref{app:c10_robustness}), and     Qwen3-32B replicates the dose-response with an even sharper drop.
+E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague hedge ``use discretion,'' L2 soft suggestion ``please consider not disclosing,'' L3 explicit constraint ``X is confidential,'' L4 imperative ``do not disclose X''), holding all other content constant. \Cref{tab:marker_gradient} shows the curve is sharply non-linear: vague hedges still leak 35/48 GPT and 24/48 DeepSeek, while soft suggestions drop leakage to 6/48 and 5/48. Explicit constraints and hard imperatives are nearly equivalent. The transition between L1 and L2 is the load-bearing one --- protection comes from the marker being readable as an operational instruction, not from the use of privacy-sounding language; the L1$\to$L2 drop is significant on {GPT-5-mini} and DeepSeek-R1-32B (\Cref{sec:results_robustness}), and     Qwen3-32B replicates the dose-response with an even sharper drop.
 
 \begin{table}[t]
   \centering
@@ -206,7 +206,7 @@ E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague he
     L4 imperative        &  2 / 48  (4\%) &  2 / 48  (4\%) &  1 / 48  (2\%) \\
     \bottomrule
   \end{tabular}
-  \caption{E8 marker-strength gradient: final leakage by marker explicitness across models. The L1$\to$L2 transition is the sharp boundary; marker presence alone is not enough. E3/E4 endpoint counts and Fisher tests are in~\Cref{app:e3,app:e4,app:c10_robustness}.}
+  \caption{E8 marker-strength gradient: final leakage by marker explicitness across models. The L1$\to$L2 transition is the sharp boundary; marker presence alone is not enough. E3/E4 endpoint counts are in~\Cref{app:e3,app:e4}; Fisher tests are in~\Cref{sec:results_robustness}.}
   \label{tab:marker_gradient}
 \end{table}
 
@@ -302,7 +302,51 @@ Taken together, these observations frame the open challenge: prose descriptions 
 \subsection{Robustness of the Main Contrasts}
 \label{sec:results_robustness}
 
-The central leakage and survival results are not artifacts of a particular scoring choice. Fisher exact tests confirm that the main downstream contrasts are highly significant: removing explicit markers sharply increases leakage in E3, and replacing vague caution language with disclosure-specific suggestions produces the largest drop in the E8 marker gradient (full $p$-values in~\Cref{app:c10_robustness}). The selective-collapse result is also stable under alternative $\sigma$ weightings. Under both binary-strict scoring, which credits only fully preserved markers, and binary-lenient scoring, which credits both preserved and paraphrased markers, boundary-marker survival under 25-word compression remains substantially below operational-fact survival on the two primary models. Thus, the main conclusion does not depend on the weakened-marker score in the judge rubric: compression still preferentially removes boundary metadata while preserving operational facts.
+We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
+
+\paragraph{Fisher exact tests.} \Cref{tab:fisher} reports two-sided Fisher exact $p$-values for the primary {GPT-5-mini} and DeepSeek-R1-32B contrasts. Removing explicit markers sharply increases leakage in E3, and replacing vague caution language with disclosure-specific suggestions produces the largest drop in the E8 marker gradient.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Contrast} & \textbf{Model} & \textbf{Fisher $p$} \\
+\midrule
+E3 +mark vs.\ no-mark & GPT-5-mini & $1.61 \times 10^{-12}$ \\
+E3 +mark vs.\ no-mark & DS-R1-32B  & $1.98 \times 10^{-13}$ \\
+E8 L1 vs.\ L2        & GPT-5-mini & $2.13 \times 10^{-9}$  \\
+E8 L1 vs.\ L2        & DS-R1-32B  & $4.02 \times 10^{-5}$  \\
+E9 allowlist vs.\ E6 & GPT-5-mini & $1.04 \times 10^{-4}$  \\
+E9 allowlist vs.\ E6 & DS-R1-32B  & $1.58 \times 10^{-3}$  \\
+\bottomrule
+\end{tabular}
+\caption{Fisher exact tests for the main leakage contrasts.}
+\label{tab:fisher}
+\end{table}
+
+\paragraph{$\sigma$ weighting robustness.} The selective-collapse pattern is robust to alternative $\sigma$ scoring schemes. Under 25-word compression, boundary-marker survival remains substantially below operational-fact survival under all tested weightings, including binary-strict and binary-lenient metrics that remove dependence on the original \emph{weakened}-marker score (\Cref{tab:sigma_weighting}). The main conclusion therefore does not depend on the weakened-marker score in the judge rubric: compression still preferentially removes boundary metadata while preserving operational facts.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Scheme} & \textbf{Model} & $\sigma$ & $\sigma_{\mathrm{op}}$ & \textbf{Gap} \\
+\midrule
+original       & GPT-5-mini & 0.690 & 0.997 & $-0.306$ \\
+original       & DS-R1-32B  & 0.580 & 0.972 & $-0.392$ \\
+binary strict  & GPT-5-mini & 0.722 & 1.000 & $-0.278$ \\
+binary strict  & DS-R1-32B  & 0.611 & 0.972 & $-0.361$ \\
+binary lenient & GPT-5-mini & 0.750 & 1.000 & $-0.250$ \\
+binary lenient & DS-R1-32B  & 0.681 & 1.000 & $-0.319$ \\
+\bottomrule
+\end{tabular}
+\caption{$\sigma$ weighting robustness under 25-word compression. Binary-strict counts only \emph{preserved} as 1; binary-lenient counts preserved and paraphrased as 1.}
+\label{tab:sigma_weighting}
+\end{table}
 
 % \subsection{Summary}
 % \label{sec:results_summary}
