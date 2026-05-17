@@ -1,82 +1,64 @@
 \section{Method}
 \label{sec:method}
-
 We study summary collapse through \textsc{Bound-Handoff}, a controlled testbed designed to isolate what happens to boundary metadata when an upstream multi-agent interaction is transformed into a handoff artifact that a downstream agent consumes. Each scenario specifies an upstream transcript, the operational facts the downstream agent needs, the boundary markers that constrain how sensitive facts may be used, and one or more downstream tasks.
-
+ 
 We distinguish two outcomes that prior work often conflates. A \emph{context dump} occurs when sensitive content appears in an internal handoff artifact, trace, or context field, with or without its governing marker. \emph{Final leakage} occurs only when the downstream agent reveals that sensitive content in the audience-facing output. Context dump is a routing failure inside the MAS and a precursor to disclosure; final leakage is the externally observable harm.
 
 \subsection{The BOUND-Handoff Dataset}
 \label{sec:dataset}
 
-\paragraph{Scenarios and domains.}
-The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario contains (i) an upstream transcript mixing operational facts with sensitive context, (ii) explicit boundary markers that license or constrain how the sensitive content may be used downstream, (iii) handoff prompts that ask an intermediate agent to produce a handoff artifact under a given condition, and (iv) a downstream task in which a second agent must act on the handoff artifact. Scenarios are written so that the operational facts are necessary for the downstream task while the sensitive context is not.
+The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario provides an upstream transcript mixing operational facts with sensitive context, explicit boundary markers anchored to upstream propositions, a handoff prompt under a given condition, and a downstream task; scenarios are written so the operational facts are necessary for the downstream task while the sensitive context is not.
 
-\paragraph{Why a controlled synthetic testbed?}
-Our goal is to isolate a handoff-level mechanism rather than estimate deployment prevalence. The causal contrasts in E3--E9 require gold operational facts, gold boundary markers, sensitive facts that are intentionally unnecessary for the downstream task, and matched counterfactual variants that differ only in boundary representation. To our knowledge, no existing public dataset combines multi-agent handoff artifacts, gold audience-boundary rules, gold operational facts, and matched counterfactual variants over marker strength and boundary representation. We therefore use hand-authored scenarios to obtain experimental control, and treat production-trace validation as future work.
+Marker categories follow Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). We evaluate four handoff surfaces --- \texttt{explicit\_summary}, \texttt{forwarding\_to\_summary}, \texttt{memory\_replay}, \texttt{report\_writer} --- and five handoff conditions --- \texttt{free\_text}, \texttt{compressed\_free\_text}, \texttt{preserve\_markers\_instruction}, \texttt{sectioned\_template}, \texttt{structured\_schema} --- which probe marker survival under different formats but are not themselves complete privacy mitigations. Crossed with 36 scenarios, the design space contains 720 handoff prompts. Full surface and condition descriptions, marker examples, and the per-domain scenario manifest are in~\Cref{app:dataset}.
+% \paragraph{Scenarios and domains.}
+% The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario contains (i) an upstream transcript mixing operational facts with sensitive context, (ii) explicit boundary markers that license or constrain how the sensitive content may be used downstream, (iii) handoff prompts that ask an intermediate agent to produce a handoff artifact under a given condition, and (iv) a downstream task in which a second agent must act on the handoff artifact. Scenarios are written so that the operational facts are necessary for the downstream task while the sensitive context is not.
+ 
+% \paragraph{Boundary markers.}
+% Marker categories are drawn from Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). Each marker is anchored to a specific upstream proposition so that its survival can be checked at the handoff step.
 
-\paragraph{Boundary markers.}
-Marker categories are drawn from Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). Each marker is anchored to a specific upstream proposition so that its survival can be checked at the handoff step.
-
-\paragraph{Handoff surfaces.}
-We study four surfaces that cover common ways one agent's output becomes another's input: \texttt{explicit\_summary} (an intermediate agent writes a summary the downstream agent reads), \texttt{forwarding\_to\_summary} (the agent forwards the upstream transcript to a summarizer), \texttt{memory\_replay} (the upstream interaction is stored verbatim and later retrieved as context), and \texttt{report\_writer} (the upstream interaction is consumed by an agent whose role is to draft an audience-facing report).
-
-\paragraph{Handoff conditions.}
-Five conditions vary compression pressure and marker support: \texttt{free\_text} (open-ended summarization), \texttt{compressed\_free\_text} (a short length cap), \texttt{preserve\_markers\_instruction} (an explicit instruction to preserve boundary metadata), \texttt{sectioned\_template} (a template separating operational facts from local context), and \texttt{structured\_schema} (a typed JSON-style schema with explicit fact and marker fields). These conditions probe marker survival under different formats; they are not complete privacy mitigations, because a format can preserve markers while still carrying sensitive content into downstream state. Crossed with 36 scenarios and four surfaces, the design space contains 720 possible handoff prompts.
-
+% \paragraph{Handoff surfaces.}
+% We study four surfaces that cover common ways one agent's output becomes another's input: \texttt{explicit\_summary}, \texttt{forwarding\_to\_summary}, \texttt{memory\_replay}, and \texttt{report\_writer}.
+ 
+% \paragraph{Handoff conditions.}
+% Five conditions vary compression pressure and marker support: \texttt{free\_text}, \texttt{compressed\_free\_text}, \texttt{preserve\_markers\_instruction}, \texttt{sectioned\_template}, and \texttt{structured\_schema}. These conditions probe marker survival under different formats; they are not complete privacy mitigations, because a format can preserve markers while still carrying sensitive content into downstream state. Crossed with 36 scenarios and four surfaces, the design space contains 720 possible handoff prompts.
+ 
 \subsection{Operational Measures}
 \label{sec:measures}
+We use three measures to separate \emph{how much} information is compressed from \emph{what kind} survives. For each gold boundary marker or operational fact, an LLM judge assigns one of four labels: preserved (1.0), paraphrased (0.75), weakened (0.35), or absent (0.0). Boundary-marker survival $\sigma$ is the average score over upstream boundary markers in the handoff; operational-fact survival $\sigma_{\mathrm{op}}$ is the analogous average over task-relevant operational facts such as times, entities, decisions, owners, and constraints. Compression ratio is $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and handoff artifact; positive $\rho$ indicates compression and negative $\rho$ indicates expansion, as in templates or schemas. Full scoring prompts and rubrics are in~\Cref{app:judge-prompt}.
 
-We introduce three measures to separate \emph{how much} information is compressed from \emph{what kind} survives.
+ 
+% We introduce three measures to separate \emph{how much} information is
+% compressed from \emph{what kind} survives.
 
-\paragraph{Boundary-marker survival ($\sigma$).}
-Boundary markers can survive verbatim, survive through paraphrase, be softened into a weaker norm, or disappear. We therefore compute $\sigma$ as a judge-scored average rather than as exact string recall. For each upstream marker $m_i$, an LLM judge assigns one of four labels:
-\[
-s_i =
-\begin{cases}
-1.00 & \text{preserved} \\
-0.75 & \text{paraphrased} \\
-0.35 & \text{weakened} \\
-0.00 & \text{absent.}
-\end{cases}
-\]
-For a handoff with marker set $M_u$, marker survival is $\sigma = \tfrac{1}{|M_u|}\sum_{m_i \in M_u} s_i$. We report $\sigma$ overall and broken down by handoff condition, surface, and marker category.
+% \paragraph{Boundary-marker survival ($\sigma$).}
+% Because boundary markers can survive verbatim, through paraphrase, in weakened form, or disappear entirely, we compute $\sigma$ as a judge-scored average rather than exact string recall. For each upstream marker an LLM judge assigns one of four labels --- preserved (1.0), paraphrased (0.75), weakened (0.35), or absent (0.0) --- and $\sigma$ is the mean across all markers in the handoff. We report $\sigma$ overall and broken down by handoff condition, surface, and marker category.
 
-\paragraph{Operational-fact survival ($\sigma_{\mathrm{op}}$).}
-To test whether handoff loss is selective rather than generic, we score operational facts (task-relevant times, entities, decisions, owners, constraints) with the identical four-level rubric and compute the analogous average. The core selective-fragility claim is that $\sigma$ falls under compression while $\sigma_{\mathrm{op}}$ remains near ceiling.
-
-\paragraph{Compression ratio ($\rho$).}
-We define $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and the handoff artifact. Positive $\rho$ indicates compression; negative $\rho$ indicates a handoff longer than the upstream transcript, as happens for templates and schemas that add structure around the original content.
+% % \paragraph{Boundary-marker survival ($\sigma$).}
+% % Boundary markers can survive verbatim, survive through paraphrase, be
+% % softened into a weaker norm, or disappear. We therefore compute $\sigma$
+% % as a judge-scored average rather than as exact string recall. For each
+% % upstream marker $m_i$, an LLM judge assigns one of four labels:
+% % \[
+% % s_i =
+% % \begin{cases}
+% % 1.00 & \text{preserved} \\
+% % 0.75 & \text{paraphrased} \\
+% % 0.35 & \text{weakened} \\
+% % 0.00 & \text{absent.}
+% % \end{cases}
+% % \]
+% % For a handoff with marker set $M_u$, marker survival is $\sigma = \tfrac{1}{|M_u|}\sum_{m_i \in M_u} s_i$. We report $\sigma$ overall and broken down by handoff condition, surface, and marker category.
+ 
+% \paragraph{Operational-fact survival ($\sigma_{\mathrm{op}}$).}
+% To test whether handoff loss is selective rather than generic, we score operational facts (task-relevant times, entities, decisions, owners, constraints) with the identical four-level rubric and compute the analogous average. The core selective-fragility claim is that $\sigma$ falls under compression while $\sigma_{\mathrm{op}}$ remains near ceiling.
+ 
+% \paragraph{Compression ratio ($\rho$).}
+% We define $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and the handoff artifact. Positive $\rho$ indicates compression; negative $\rho$ indicates a handoff longer than the upstream transcript, as happens for templates and schemas.
 
 \subsection{Experiment Families}
 \label{sec:experiments}
+We group experiments into three families. E1--E2 test whether handoff compression selectively lowers boundary-marker survival while preserving operational facts. E3--E5 and E8 test whether boundary-marker strength causally controls final leakage under matched downstream tasks. E6--E7 and E9 probe enforcement: prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. Full prompt variants, counts, and manifests appear in \Cref{app:experiments_family}.
 
-The empirical study consists of nine experiment families and probes, organized around three research questions. \Cref{sec:setup} gives the run-time specification (counts, models, evaluator); here we name what each experiment tests.
 
-\begin{description}
-\item[E1 -- Baseline handoff survival (RQ1).]
-A stratified subset of model-generated handoffs spanning all scenarios, conditions, and surfaces, measuring $\sigma$, $\sigma_{\mathrm{op}}$, and task success.
 
-\item[E2 -- Compression stress (RQ1).]
-Two hard-budget handoff conditions (40-word and 25-word, one-sentence) testing whether selective fragility widens as $\rho$ grows.
-
-\item[E3 -- Controlled context dump (RQ2).]
-Three handoff variants matched on operational content (\texttt{no\_dump\_marker}, \texttt{dump\_with\_marker}, \texttt{dump\_no\_marker}) crossed with four downstream pressure conditions. Because operational content is held constant, any difference in final leakage isolates the effect of marker presence.
-
-\item[E4 -- Weak markers (RQ2).]
-Adds a fourth variant, \texttt{dump\_weak\_marker}, with vague privacy language such as ``use discretion.'' Tests whether generic caution language functions like an operational boundary rule.
-
-\item[E5 -- No-handoff single-agent control (RQ2).]
-The same scenarios delivered directly to a single agent under \texttt{direct\_full\_marker}, \texttt{direct\_weak\_marker}, and \texttt{direct\_no\_marker}. Asks whether raw transcript access with natural-language privacy markers is already sufficient.
-
-\item[E6 -- Prompt-only mitigation (RQ3).]
-Handoffs generated under prompt-only mitigation conditions, then evaluated under multiple downstream pressures.
-
-\item[E7 -- Enforced redaction (RQ3).]
-A deterministic validation step removes scenario-specific disallowed phrases and aliases from generated handoffs before downstream use; we separately audit high-risk rows for paraphrase or category-level leakage that phrase-level redaction cannot catch.
-
-\item[E8 -- Marker-strength gradient (RQ2).]
-Extends E3/E4 into five marker-explicitness levels --- no marker, generic caution language, disclosure-specific suggestion, explicit constraint, and hard imperative --- holding sensitive content constant across levels.
-
-\item[E9 -- Operationalized boundary probe (RQ3).]
-Supplies downstream agents with a gold-derived typed audience-allowlist schema in which each fact carries an explicit \texttt{allowed\_audiences} field. Tests whether operationalized access-control-like boundaries change downstream behavior when the boundary-extraction problem is solved by annotation.
-\end{description}
+ 
