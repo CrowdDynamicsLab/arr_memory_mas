@@ -535,6 +535,41 @@ Total                       & 0 / 48 & 0 / 48 \\
 \end{tabular}
 \end{table}
 
+\subsection{Corrupted-Allowlist Stress Test for E9}
+\label{app:e9_corrupted}
+
+E9 tests an upper-bound condition in which downstream agents receive a gold-derived typed handoff: each fact carries an explicit \texttt{allowed\_audiences} field, operational facts list the downstream audience, and sensitive facts have empty allowlists. The main E9 result shows that this representation suppresses final leakage. Because the schema is hand-constructed from scenario annotations, however, E9 alone does not show whether the protective effect comes from typed formatting in general or from the correctness and machine-readability of the boundary field itself.
+
+To isolate this, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, for 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants are designed to preserve the presence of a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} (the allowlist field is present but broadened or made less precise); \textbf{typo allowlist key} (the intended boundary field is misspelled or made less machine-readable); \textbf{format noise} (the boundary information is embedded in a noisier, less consistently parseable format); and \textbf{negation flip} (the intended deny/allow semantics are reversed or contradicted).
+
+Table~\ref{tab:app_e9_corrupted} reports final leakage counts.
+
+\begin{table}[h]
+\centering
+\caption{Corrupted-allowlist stress test for the E9 operationalized-boundary probe. Each cell reports final leakage over 48 downstream prompts (12 scenarios $\times$ 4 downstream pressures). Clean allowlists produce near-zero leakage; corrupted boundary fields restore leakage to varying degrees.}
+\label{tab:app_e9_corrupted}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Variant} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} \\
+\midrule
+clean allowlist                   & 0 / 48  (0.0\%)  & 1 / 48  (2.1\%)  \\
+dump-with-marker control          & 0 / 48  (0.0\%)  & 1 / 48  (2.1\%)  \\
+\midrule
+corrupt: scope drift              & 10 / 48 (20.8\%) & 4 / 48  (8.3\%)  \\
+corrupt: typo allowlist key       & 23 / 48 (47.9\%) & 18 / 48 (37.5\%) \\
+corrupt: format noise             & 40 / 48 (83.3\%) & 22 / 48 (45.8\%) \\
+corrupt: negation flip            & 44 / 48 (91.7\%) & 38 / 48 (79.2\%) \\
+\midrule
+dump-no-marker control            & 43 / 48 (89.6\%) & 39 / 48 (81.2\%) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern supports three conclusions. First, the E9 effect is not merely a formatting artifact: if the presence of a structured schema were sufficient by itself, corrupted variants should remain close to the clean allowlist condition; instead, leakage rises substantially when the boundary field is misspelled, noisy, or semantically inverted. Second, the severity of corruption matters --- mild scope drift increases leakage only modestly, especially on DeepSeek-R1-32B, whereas negation-flip corruption is nearly indistinguishable from the no-marker control on both model families. This dose-like pattern is consistent with downstream behavior depending on whether the boundary is represented as a \emph{correct} operational constraint. Third, clean operationalized boundaries are at least as protective as the explicit-marker control in this setting; on GPT-5-mini both clean allowlist and dump-with-marker yield $0/48$, and on DeepSeek-R1-32B both yield $1/48$. We therefore do not interpret this stress test as evidence that typed allowlists outperform explicit natural-language markers in this matched setting. Instead, the stress test strengthens the narrower claim that E9's protection depends on the correctness and machine-readability of the boundary representation: when the boundary field is corrupted, leakage returns.
+
+Taken together with the main E9 result, this stress test clarifies the open engineering problem. Gold-derived allowlists show that downstream agents can act on operationalized boundaries when those boundaries are correct; corrupted allowlists show that this protection is brittle to extraction and representation errors. The remaining challenge is therefore not simply to add a schema around a handoff, but to generate, validate, and enforce correct typed boundary fields from upstream interactions.
+
 \subsection{Statistical and Scoring Robustness}
 \label{app:c10_robustness}
 
