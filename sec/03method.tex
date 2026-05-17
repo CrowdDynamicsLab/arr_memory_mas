@@ -9,7 +9,10 @@ We distinguish two outcomes that prior work often conflates. A \emph{context dum
  
 \paragraph{Scenarios and domains.}
 The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario contains (i) an upstream transcript mixing operational facts with sensitive context, (ii) explicit boundary markers that license or constrain how the sensitive content may be used downstream, (iii) handoff prompts that ask an intermediate agent to produce a handoff artifact under a given condition, and (iv) a downstream task in which a second agent must act on the handoff artifact. Scenarios are written so that the operational facts are necessary for the downstream task while the sensitive context is not.
- 
+
+\paragraph{Why a controlled synthetic testbed?}
+Our goal is to isolate a handoff-level mechanism rather than estimate deployment prevalence. The causal contrasts in E3--E9 require gold operational facts, gold boundary markers, sensitive facts that are intentionally unnecessary for the downstream task, and matched counterfactual variants that differ only in boundary representation. To our knowledge, no existing public dataset combines multi-agent handoff artifacts, gold audience-boundary rules, gold operational facts, and matched counterfactual variants over marker strength and boundary representation. We therefore use hand-authored scenarios to obtain experimental control, and treat production-trace validation as future work.
+
 \paragraph{Boundary markers.}
 Marker categories are drawn from Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). Each marker is anchored to a specific upstream proposition so that its survival can be checked at the handoff step.
 
