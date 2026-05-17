@@ -58,7 +58,7 @@ where $|u|$ and $|h|$ are the token lengths of the upstream transcript and the h
 The empirical study has five experiment families. Together they separate upstream marker survival, downstream leakage, controls, and mitigation.
 
 \paragraph{Handoff survival and compression stress tests.}
-The Experiment~1 baseline evaluates the 180-prompt stratified handoff subset on both models. We compute $\sigma$, $\sigma_{\mathrm{op}}$, task success, and diagnostic breakdowns by handoff condition, surface, and marker category. To make compression pressure explicit, we add two hard-budget stress tests (Experiment~2) over the 36 scenarios: a 40-word compression condition and a stricter 25-word, one-sentence condition. The stress tests are run on both \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}.
+The Experiment~1 baseline evaluates the 180-prompt stratified handoff subset across models. We compute $\sigma$, $\sigma_{\mathrm{op}}$, task success, and diagnostic breakdowns by handoff condition, surface, and marker category. To make compression pressure explicit, we add two hard-budget stress tests (Experiment~2) over the 36 scenarios: a 40-word compression condition and a stricter 25-word, one-sentence condition. The stress tests are run on both \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}.
 
 \paragraph{Experiment~3: controlled context-dump test.}
 \label{sec:exp3}
@@ -83,7 +83,7 @@ Experiment~6 evaluates prompt-only mitigation on generated handoffs. We generate
 \label{sec:models}
 
 The primary model is \texttt{gpt-5-mini}~\cite{singh2025openai} and the replication model is \texttt{deepseek-r1:32b}~\cite{deepseekai2025deepseekr1incentivizingreasoningcapability}. All runs use temperature $0.1$. 
-Model coverage differs by experiment family: Experiments~1--4, the no-handoff control, Experiment~6, and Experiment~7 are run on both model families. GPT-5-mini is the primary model used for development and calibration; DeepSeek-R1-32B is used as a cross-model replication. We use matched prompts across models whenever both are run.
+Model coverage differs by experiment family: Experiments~1--4, the no-handoff control, Experiment~6, and Experiment~7 are run on both model families. \texttt{gpt-5-mini} is the primary model used for development and calibration; \texttt{deepseek-R1-32B} is used as a cross-model replication. We use matched prompts across models whenever both are run.
 
 \subsection{Evaluator and Validation}
 \label{sec:evaluator}

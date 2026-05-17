@@ -21,7 +21,7 @@ gives the scale and headline result of each experiment.
 \midrule
 Phase~2 baseline handoffs & 36 scenarios, 5 conditions, 180 prompts, \texttt{gpt-5-mini} & Marker survival $\sigma$ and operational survival $\sigma_{\mathrm{op}}$ & $\sigma=0.954$ [0.933, 0.972], $\sigma_{\mathrm{op}}=0.994$ [0.987, 1.000] \\
 Compression stress tests & 36 scenarios per condition; \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b} & $\sigma$ vs.\ $\sigma_{\mathrm{op}}$ under hard compression & At 25 words: GPT $\sigma=0.690$ vs.\ $\sigma_{\mathrm{op}}=0.997$; DeepSeek $\sigma=0.580$ vs.\ $\sigma_{\mathrm{op}}=0.972$ \\
-Phase~2B context-dump test & 12 scenarios $\times$ 3 variants $\times$ 4 pressures per model & Final audience-facing leakage & No dump: 0/48 on both models; dump with explicit marker: 2/48 GPT, 1/48 DeepSeek; dump without marker: 48/48 GPT, 37/48 DeepSeek \\
+Phase~2B context-dump test & 12 scenarios $\times$ 3 variants $\times$ 4 pressures per model & Final audience-facing leakage & No dump: 0/48 across models; dump with explicit marker: 2/48 GPT, 1/48 DeepSeek; dump without marker: 48/48 GPT, 37/48 DeepSeek \\
 Phase~2C weak-marker test & 12 scenarios $\times$ 4 variants $\times$ 4 pressures per model & Manual final-leakage labels for weak marker & Weak markers leak in 44/48 GPT and 38/48 DeepSeek cells \\
 Single-agent control & 12 scenarios $\times$ 3 direct variants $\times$ 4 pressures per model & Final leakage without an intermediate handoff & Direct full transcript still leaks in 20/48 GPT and 11/48 DeepSeek cells; weak/no marker variants are much worse \\
 Experiment~5 mitigation & 72 generated handoffs, 288 downstream prompts, \texttt{gpt-5-mini} & Final leakage under prompt-only mitigations & Prompt-only mitigation leaks in 58/288 outputs, including the nominally safe schema \\
@@ -113,7 +113,7 @@ Table~\ref{tab:phase2_breakdowns_compact} gives the two most compact diagnostic 
 
 The baseline result is therefore not that boundary metadata always disappears. Rather, it is selectively more fragile than operational content. This distinction matters because ordinary handoff formats are often verbose enough to preserve both. To test whether the gap widens under realistic compression pressure, we added two hard-budget stress tests: a 40-word condition and a stricter 25-word, one-sentence condition.
 
-Table~\ref{tab:compression_stress} reports the stress-test results. Under 25-word compression, boundary survival drops sharply while operational survival remains near ceiling. The pattern replicates on \texttt{deepseek-r1:32b}: DeepSeek's absolute $\sigma$ is lower than GPT's, but both models show the same selective-fragility signature.
+Table~\ref{tab:compression_stress} reports the stress-test results. Under 25-word compression, boundary survival drops sharply while operational survival remains near ceiling. The pattern replicates on \texttt{deepseek-r1:32b}: DeepSeek's absolute $\sigma$ is lower than GPT's, but two primary models show the same selective-fragility signature.
 
 \begin{table*}[t]
 \centering
@@ -162,7 +162,7 @@ We also compute a compression ratio $\rho = 1 - |\mathrm{handoff}|/|\mathrm{upst
 
 The Phase~2 handoff pilot revealed many context dumps: sensitive facts were carried forward inside internal handoff artifacts, often in fields labelled as local context or content not to forward. Phase~2B tests whether such dumped content becomes audience-facing leakage. We construct 12 scenarios with three matched variants: \texttt{no\_dump\_marker}, where the sensitive fact is not forwarded; \texttt{dump\_with\_marker}, where the sensitive fact is forwarded with an explicit boundary rule; and \texttt{dump\_no\_marker}, where the sensitive fact is forwarded without the marker. Each variant is tested under four downstream pressure conditions.
 
-Table~\ref{tab:phase2b_main} shows that the three variants separate cleanly. Data minimization is fully protective in the tested cells: no-dump variants produce 0/48 leaks on both models. Explicit markers are also strongly protective: leakage is 2/48 on GPT and 1/48 on DeepSeek. Without a marker, dumped sensitive context becomes the modal downstream behavior: 48/48 on GPT and 37/48 on DeepSeek.
+Table~\ref{tab:phase2b_main} shows that the three variants separate cleanly. Data minimization is fully protective in the tested cells: no-dump variants produce 0/48 leaks across models. Explicit markers are also strongly protective: leakage is 2/48 on GPT and 1/48 on DeepSeek. Without a marker, dumped sensitive context becomes the modal downstream behavior: 48/48 on GPT and 37/48 on DeepSeek.
 
 \begin{table}[t]
 \centering

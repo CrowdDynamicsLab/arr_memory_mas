@@ -66,7 +66,7 @@ This section gives the run-time specification that Section~\ref{sec:setup} summa
 
 \subsection{Experiment Families}
 \label{app:experiments_family}
-The empirical study consists of nine experiments families and probes, organized around three research questions. \Cref{sec:setup} gives the run-time specification (counts, models, evaluator); here we name what each experiment tests.
+The empirical study consists of nine experiment families and probes, organized around three research questions. \Cref{sec:setup} gives the run-time specification (counts, models, evaluator); here we name what each experiment tests.
  
 \begin{description}
 \item[E1 -- Baseline handoff survival (RQ1).]
@@ -101,8 +101,7 @@ Supplies downstream agents with a gold-derived typed audience-allowlist schema i
 \subsection{Prompt Counts}
 \label{app:counts}
 The full E1 handoff design space contains $36 \times 5 \times 4 = 720$ scenario-condition-surface cells. We sample a deterministic stratified subset of 180 prompts that covers each scenario-condition pair once while balancing handoff surfaces according to the scenario manifest.
-
-Table~\ref{tab:prompt-counts} lists per-experiment prompt counts. ``Surfaces'' is the number of distinct handoff surfaces that contribute to the experiment.
+Table~\ref{tab:prompt-counts} lists per-experiment prompt counts and the design crossed to obtain each count.
 
 \begin{table*}[t]
   \centering
@@ -200,19 +199,19 @@ The calibrated leakage detector reads each downstream output and matches against
 \subsection{Manual Labeling Protocol}
 \label{app:manual}
 
-E3 is fully manually labeled. All 144 GPT-5-mini rows are annotated against the gold disallowed-disclosure list with a binary \emph{final leakage} judgment, yielding the confusion matrix in Section~\ref{sec:results_eval} (TP 50, FP 0, FN 0, TN 94). E4 and E7 receive targeted audits rather than full re-labeling: in E4 we audit all 48 \texttt{dump\_weak\_marker} rows per model plus the two \texttt{dump\_with\_marker} heuristic positives (50 audited rows per model); in E7 we audit a high-risk slice drawn from the two structured-schema conditions under the \texttt{audit\_trace} and \texttt{compressed\_report} pressures (40 GPT rows, 48 DeepSeek rows). 
+E3 is fully manually labeled. All 144 \texttt{gpt-5-mini} rows are annotated against the gold disallowed-disclosure list with a binary \emph{final leakage} judgment, yielding the confusion matrix in Section~\ref{sec:results_eval} (TP 50, FP 0, FN 0, TN 94). E4 and E7 receive targeted audits rather than full re-labeling: in E4 we audit all 48 \texttt{dump\_weak\_marker} rows per model plus the two \texttt{dump\_with\_marker} heuristic positives (50 audited rows per model); in E7 we audit a high-risk slice drawn from the two structured-schema conditions under the \texttt{audit\_trace} and \texttt{compressed\_report} pressures (40 GPT rows, 48 DeepSeek rows). 
 
 % =====================================================================
 
 \section{Additional Results}
 \label{app:results}
 
-This section provides the per-experiment breakdowns that support Section~\ref{sec:results}. Survival scores use the judge rubric described in Section~\ref{sec:results}: preserved = 1.0, paraphrased = 0.75, weakened = 0.35, and absent = 0.0.
+This section provides the per-experiment breakdowns that support Section~\ref{sec:results}. Survival scores use the judge rubric described in~\Cref{sec:measures} and~\Cref{app:judge-prompt}: preserved = 1.0, paraphrased = 0.75, weakened = 0.35, and absent = 0.0.
 
 \subsection{E1 Baseline Handoff Survival}
 \label{app:e1}
-
-\Cref{tab:app_e1_condition} reports the E1 baseline by handoff condition (this is the table previously shown in Section~\ref{sec:results_rq1}; we move it here to make room for the compression-stress table in the main text). Tables~\ref{tab:app_e1_condition}--\ref{tab:app_e1_domain} then provide per-surface, per-marker-category, and per-domain breakdowns. The overall pattern from Section~\ref{sec:results_rq1} replicates within every slice: operational content stays close to ceiling while boundary survival varies. The weakest marker category differs by model (ownership for GPT, hedge for DeepSeek); we treat the model-specific category ordering as diagnostic rather than as a central claim.
+=
+\Cref{tab:app_e1_condition} reports the E1 baseline by handoff condition (this is the table previously shown in Section~\ref{sec:results_rq1}; we move it here to make room for the compression-stress table in the main text). Tables~\ref{tab:app_e1_surface_gpt}--\ref{tab:app_e1_domain} then provide per-surface, per-marker-category, and per-domain breakdowns. The overall pattern from Section~\ref{sec:results_rq1} replicates within every slice: operational content stays close to ceiling while boundary survival varies. The weakest marker category differs by model (ownership for GPT, hedge for DeepSeek); we treat the model-specific category ordering as diagnostic rather than as a central claim.
 
 \begin{table}[h]
 \centering
@@ -222,7 +221,7 @@ This section provides the per-experiment breakdowns that support Section~\ref{se
 \setlength{\tabcolsep}{1pt}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
- & \multicolumn{2}{c}{\textbf{GPT-5-mini}} & \multicolumn{2}{c}{\textbf{DS-R1-32B}} \\
+ & \multicolumn{2}{c}{\textbf{GPT-5-mini}} & \multicolumn{2}{c}{\textbf{DS-R1}} \\
 \cmidrule(lr){2-3}\cmidrule(l){4-5}
 \textbf{Condition} & $\sigma$ & $\sigma_{\mathrm{op}}$ & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
 \midrule
@@ -313,7 +312,9 @@ scheduling         & 0.977 & 1.000 & 0.933 & 0.983 \\
 \subsection{E2 Compression Stress and $\sigma$-vs-$\rho$ Trajectories}
 \label{app:e2}
 
-Tables~\ref{tab:app_e2_rho_gpt} and~\ref{tab:app_e2_rho_ds} give the full $\sigma$-vs-$\rho$ trajectories for both models. Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content; positive $\rho$ corresponds to hard-budget compression. On both models, $\sigma_{\mathrm{op}}$ stays near ceiling across the trajectory while $\sigma$ falls sharply once $\rho$ becomes positive. Tables~\ref{tab:app_e2_stress_surface}--\ref{tab:app_e2_stress_domain} give the 25-word stress condition broken down by handoff surface, marker category, and domain.
+Tables~\ref{tab:app_e2_rho_gpt} and~\ref{tab:app_e2_rho_ds} give the full $\sigma$-vs-$\rho$ trajectories for both models. 
+\texttt{qwen3:32b} was run only on the hard-budget E2 conditions and is therefore reported in the main compression table rather than the full trajectory tables.
+Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content; positive $\rho$ corresponds to hard-budget compression. On both models, $\sigma_{\mathrm{op}}$ stays near ceiling across the trajectory while $\sigma$ falls sharply once $\rho$ becomes positive. Tables~\ref{tab:app_e2_stress_surface}--\ref{tab:app_e2_stress_domain} give the 25-word stress condition broken down by handoff surface, marker category, and domain.
 
 \begin{table}[h]
 \centering
@@ -492,7 +493,7 @@ Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream 
 \subsection{E6 Prompt-Only Mitigation}
 \label{app:e6}
 
-E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on DeepSeek-R1-32B. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_rq3}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on both models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
+E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on \texttt{deepseek-R1-32B}. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_rq3}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on both models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
 
 \begin{table*}[h]
 \centering
@@ -526,7 +527,7 @@ E6 evaluates whether prompt instructions and schemas alone prevent generated han
 \label{app:e7}
 E7 adds a deterministic validation step before downstream use, removing scenario-specific disallowed phrases and aliases from generated handoffs. Exact-phrase leakage drops to 0/288 on both models, while task success remains essentially unchanged (0.998 GPT, 0.997 DeepSeek). Table~\ref{tab:app_e7_redaction_counts} shows how aggressively the redactor modifies generated handoffs before downstream evaluation, broken down by mitigation condition. Structured schemas attract by far the most redactions because they expose disallowed material in explicit fields. Table~\ref{tab:app_e7_audit} gives the high-risk manual audit on both models, restricted to the two structured-schema conditions under \texttt{audit\_trace} and \texttt{compressed\_report}, where residual leakage is most likely. Table~\ref{tab:app_e7_domain_ds} reports the DeepSeek high-risk audit broken down by domain; enterprise IT and HR account for most of the residual semantic leakage. Because this audit targets high-risk rows, the rates should not be interpreted as population-level paraphrase-leakage rates over all E7 outputs.
 
-\begin{table}[h]
+\begin{table*}[htbp]
 \centering
 \caption{E7 redaction counts before downstream evaluation. }
 \label{tab:app_e7_redaction_counts}
@@ -545,7 +546,7 @@ E7 adds a deterministic validation step before downstream use, removing scenario
 Overall                                 & 46 / 72 & 145 \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \begin{table*}[h]
 \centering
@@ -608,7 +609,7 @@ E7 Enforced redaction     & 0.998 & 0.997 \\
 
 \subsection{E9 Operationalized Boundary Probe}
 \label{app:e9}
-E9 supplies downstream agents with a gold-derived typed handoff in which every fact carries an explicit \texttt{allowed\_audiences} field. Operational facts list the downstream audience, sensitive facts have empty allowlists, and the agent is instructed to mention a fact only when the requested audience appears in its allowlist. Table~\ref{tab:app_e9} reports the per-pressure breakdown. Final leakage is zero in every cell on both models. Compared with the prompt-only E6 baseline, this reduction is significant under Fisher's exact test on both models (GPT-5-mini: 0/48 vs.\ 58/288, $p = 1.04 \times 10^{-4}$; DeepSeek-R1-32B: 0/48 vs.\ 42/288, $p = 1.58 \times 10^{-3}$). Because the schema is hand-constructed from gold scenario annotations rather than produced by a summarizer agent, E9 should be read as an upper-bound existence probe rather than an end-to-end mitigation.
+E9 supplies downstream agents with a gold-derived typed handoff in which every fact carries an explicit \texttt{allowed\_audiences} field. Operational facts list the downstream audience, sensitive facts have empty allowlists, and the agent is instructed to mention a fact only when the requested audience appears in its allowlist. Table~\ref{tab:app_e9} reports the per-pressure breakdown. Final leakage is zero in every cell on both models. Compared with the prompt-only E6 baseline, this reduction is significant under Fisher's exact test on both models (GPT-5-mini: 0/48 vs.\ 58/288, $p = 1.04 \times 10^{-4}$; \texttt{deepseek-R1-32B}: 0/48 vs.\ 42/288, $p = 1.58 \times 10^{-3}$). Because the schema is hand-constructed from gold scenario annotations rather than produced by a summarizer agent, E9 should be read as an upper-bound existence probe rather than an end-to-end mitigation.
 
 \begin{table}[h]
 \centering
@@ -632,7 +633,7 @@ Total                       & 0 / 48 & 0 / 48 \\
 \subsection{Corrupted-Allowlist Stress Test for E9}
 \label{app:e9_corrupted}
 To test whether E9's effect comes from typed structure itself or from the correctness of the boundary field, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, yielding 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants preserve a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} broadens or weakens the allowlist; \textbf{typo allowlist key} misspells or obscures the boundary field; \textbf{format noise} embeds the boundary in a less consistently parseable format; and \textbf{negation flip} reverses or contradicts the intended deny/allow semantics. Table~\ref{tab:app_e9_corrupted} reports final leakage counts.
-Qwen3-32B's clean allowlist leaks slightly more than GPT or DeepSeek (4/48 vs.\ 0/48 and 1/48), but the qualitative pattern, i.e., substantial restoration of leakage under negation-flip and format-noise corruption. is preserved
+\texttt{qwen3:32b}'s clean allowlist leaks slightly more than GPT-5-mini or \texttt{deepseek-R1-32B} (4/48 vs.\ 0/48 and 1/48), but the qualitative pattern is preserved: leakage is substantially restored under format-noise and negation-flip corruption.
 % E9 tests an upper-bound condition in which downstream agents receive a gold-derived typed handoff: each fact carries an explicit \texttt{allowed\_audiences} field, operational facts list the downstream audience, and sensitive facts have empty allowlists. The main E9 result shows that this representation suppresses final leakage. Because the schema is hand-constructed from scenario annotations, however, E9 alone does not show whether the protective effect comes from typed formatting in general or from the correctness and machine-readability of the boundary field itself.
 
 % To isolate this, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, for 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants are designed to preserve the presence of a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} (the allowlist field is present but broadened or made less precise); \textbf{typo allowlist key} (the intended boundary field is misspelled or made less machine-readable); \textbf{format noise} (the boundary information is embedded in a noisier, less consistently parseable format); and \textbf{negation flip} (the intended deny/allow semantics are reversed or contradicted).
@@ -646,7 +647,7 @@ Qwen3-32B's clean allowlist leaks slightly more than GPT or DeepSeek (4/48 vs.\ 
 \small
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\textbf{Variant} & \textbf{gpt-5-mini} & \textbf{deepseek-r1:32b} & \textbf{qwen3:32b} \\
+\textbf{Variant} & \textbf{GPT-5-mini} & \textbf{DeepSeek-r1} & \textbf{Qwen3} \\
 \midrule
 clean allowlist                   & 0 / 48  (0.0\%)  & 1 / 48  (2.1\%)  & 4 / 48  (8.3\%)  \\
 dump-with-marker control          & 0 / 48  (0.0\%)  & 1 / 48  (2.1\%)  & 1 / 48  (2.1\%)  \\
@@ -673,9 +674,9 @@ Together with the main E9 result, this stress test clarifies the open engineerin
 
 We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
 
-\paragraph{Fisher exact tests.} Table~\ref{tab:app_fisher} reports two-sided Fisher exact $p$-values for the three main leakage contrasts.
+\paragraph{Fisher exact tests.} Table~\ref{tab:app_fisher} reports two-sided Fisher exact $p$-values for the primary \texttt{gpt-5-mini} and \texttt{deepseek-R1-32B} contrasts.
 
-\begin{table}[h]
+\begin{table*}[htbp]
 \centering
 \caption{Fisher exact tests for the main leakage contrasts.}
 \label{tab:app_fisher}
@@ -684,15 +685,15 @@ We report Fisher exact tests for the main leakage contrasts and check that the c
 \toprule
 \textbf{Contrast} & \textbf{Model} & \textbf{Fisher $p$} \\
 \midrule
-E3 dump+marker vs.\ dump-no-marker & GPT-5-mini      & $1.61 \times 10^{-12}$ \\
-E3 dump+marker vs.\ dump-no-marker & DeepSeek-R1-32B & $1.98 \times 10^{-13}$ \\
-E8 L1 vague vs.\ L2 suggestion     & GPT-5-mini      & $2.13 \times 10^{-9}$  \\
-E8 L1 vague vs.\ L2 suggestion     & DeepSeek-R1-32B & $4.02 \times 10^{-5}$  \\
-E9 typed allowlist vs.\ E6 overall & GPT-5-mini      & $1.04 \times 10^{-4}$  \\
-E9 typed allowlist vs.\ E6 overall & DeepSeek-R1-32B & $1.58 \times 10^{-3}$  \\
+E3 dump+marker vs.\ dump-no-marker & \texttt{gpt-5-mini}      & $1.61 \times 10^{-12}$ \\
+E3 dump+marker vs.\ dump-no-marker & \texttt{deepseek-R1-32B} & $1.98 \times 10^{-13}$ \\
+E8 L1 vague vs.\ L2 suggestion     & \texttt{gpt-5-mini}      & $2.13 \times 10^{-9}$  \\
+E8 L1 vague vs.\ L2 suggestion     & \texttt{deepseek-R1-32B} & $4.02 \times 10^{-5}$  \\
+E9 typed allowlist vs.\ E6 overall & \texttt{gpt-5-mini}     & $1.04 \times 10^{-4}$  \\
+E9 typed allowlist vs.\ E6 overall & \texttt{deepseek-R1-32B} & $1.58 \times 10^{-3}$  \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \paragraph{$\sigma$ weighting robustness.} The selective-collapse pattern is robust to alternative $\sigma$ scoring schemes. Under 25-word compression, boundary-marker survival remains substantially below operational-fact survival under all tested weightings, including binary strict and binary lenient metrics that remove dependence on the original \emph{weakened}-marker score (Table~\ref{tab:app_sigma_weighting}).
 
@@ -705,12 +706,12 @@ E9 typed allowlist vs.\ E6 overall & DeepSeek-R1-32B & $1.58 \times 10^{-3}$  \\
 \toprule
 \textbf{Scheme} & \textbf{Model} & $\sigma$ & $\sigma_{\mathrm{op}}$ & \textbf{Gap} \\
 \midrule
-original        & GPT-5-mini      & 0.690 & 0.997 & $-0.306$ \\
-original        & DeepSeek-R1-32B & 0.580 & 0.972 & $-0.392$ \\
-binary strict   & GPT-5-mini      & 0.722 & 1.000 & $-0.278$ \\
-binary strict   & DeepSeek-R1-32B & 0.611 & 0.972 & $-0.361$ \\
-binary lenient  & GPT-5-mini      & 0.750 & 1.000 & $-0.250$ \\
-binary lenient  & DeepSeek-R1-32B & 0.681 & 1.000 & $-0.319$ \\
+original        & \texttt{gpt-5-mini}      & 0.690 & 0.997 & $-0.306$ \\
+original        & \texttt{deepseek-R1-32B} & 0.580 & 0.972 & $-0.392$ \\
+binary strict   & \texttt{gpt-5-mini}      & 0.722 & 1.000 & $-0.278$ \\
+binary strict   & \texttt{deepseek-R1-32B} & 0.611 & 0.972 & $-0.361$ \\
+binary lenient  & \texttt{gpt-5-mini}      & 0.750 & 1.000 & $-0.250$ \\
+binary lenient  & \texttt{deepseek-R1-32B} & 0.681 & 1.000 & $-0.319$ \\
 \bottomrule
 \end{tabular}
 \end{table}
