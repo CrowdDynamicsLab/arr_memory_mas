@@ -622,3 +622,36 @@ binary lenient  & DeepSeek-R1-32B & 0.681 & 1.000 & $-0.319$ \\
 \label{app:qualitative}
 
 The residual failures after phrase-level redaction in E7 are semantic rather than exact-string copies. Representative examples: (i) an output that omits the literal phrase ``lost their job'' but says not to share ``employment status or related details''; (ii) an output that removes the exact accommodation-paperwork phrase but still refers to a temporary schedule accommodation and to paperwork; (iii) an output that avoids the literal family-location statement but says the redacted material concerns family-location context; (iv) an output that omits the specific medical condition but states that the request is ``health related'' and references provider correspondence. These cases motivate the limitation in Section~\ref{sec:results_rq3}: phrase-level validation prevents direct string propagation but does not remove all sensitive-category inferences.
+
+\section{Extended Related Work}
+\label{app:extended_related}
+
+The compressed Related Work in the main paper groups prior work into four threads. This appendix expands the positioning relative to adjacent literature.
+
+\paragraph{Privacy benchmarks vs.\ the handoff artifact.}
+ConfAIde~\citep{mireshghallah2023can}, PrivacyLens~\citep{shao2024privacylens}, and AgentDAM~\citep{zharmagambetov2025agentdam} treat the agent as a single decision-making unit and ask whether a final action respects a contextual disclosure norm. AgentDAM additionally operationalizes data minimization for web agents. Our unit of analysis is different: the cross-phase summary produced when one agent compresses upstream interaction for another. In that setting, the norm violation can originate before the final speaker acts --- a summarizer can preserve the sensitive fact while silently dropping the marker that constrained how the fact could be used.
+
+\paragraph{Multi-agent leakage surfaces.}
+AgentLeak~\citep{yagoubi2026agentleak} shows that violations frequently occur in internal inter-agent channels rather than user-facing outputs. SumLeak~\citep{patil2025sum} formalizes compositional leakage in which individually innocuous responses aggregate into a sensitive attribute. Prompt Infection~\citep{lee2024prompt}, MASLeak~\citep{wang2025ip}, and Agent-in-the-Middle~\citep{he2025red} demonstrate adversarial inter-agent attacks. Our setting is non-adversarial: the sensitive information is already present at the source and is often accompanied by an explicit boundary marker that should constrain its use; the failure is that the marker, not the fact, is weakened or dropped in cross-phase compression.
+
+\paragraph{Memory extraction.}
+MEXTRA~\citep{wang2025unveiling} demonstrates black-box extraction of private user--agent interactions stored for future demonstrations. We adopt the same channel-level lens but study a non-adversarial failure: when one agent's output becomes another's input via summarization, what governance information is preserved, what is silently lost, and when does that loss become final audience-facing leakage?
+
+\paragraph{Summarization fidelity.}
+Outside the agent literature, abstractive-summarization work has long observed that compression drops hedges, attributions, and conditions that qualify what surface-level facts mean~\citep{maynez2020faithfulness}. Our finding is the multi-agent privacy analogue: the propositions most vulnerable to compression are often those that license or constrain the propositions that survive. The downstream agent then receives a fact without the rule that made the fact safe to use.
+
+\paragraph{Communication Privacy Management.}
+CPM~\citep{petronio1991communication, petronio2002boundaries, griffin2006first} models privacy as boundary work: individuals own private information, license its disclosure to specific co-owners under specific use conditions, and experience boundary turbulence when those conditions are violated. CPM provides a vocabulary that distinguishes the operational content of a fact from the rule that governs its use. Our contribution, in CPM terms, is to identify a structural failure of MAS --- the cross-phase summary --- in which operational content consistently survives while the licensing rule consistently does not.
+
+\section{Extended Ethics Discussion}
+\label{app:ethics}
+
+This appendix expands the brief Ethics Statement in the main paper.
+
+\paragraph{Use of data.} All scenarios in the testbed are hand-authored synthetic vignettes. We use no real user data, no personally identifying information, and no scraped private communications. The ``sensitive facts'' in each scenario (e.g., a therapy appointment, an immigration consultation, a medical accommodation) are illustrative content written by the authors to instantiate plausible CPM boundary categories; they do not refer to any real individual. Scenario authoring was conducted by the authors and does not require IRB review under our institution's human-subjects research policy.
+
+\paragraph{Dual-use considerations.} A paper that catalogues how multi-agent systems leak private information could in principle inform an adversary. We judge the net effect of disclosure to be positive: (i) summary collapse is a structural property of how current LLMs compress dialogue, not a novel attack vector; (ii) the failure mode is already implicitly exploited any time an automated handoff system propagates context dump; and (iii) the operational-lifting probe points to a constructive direction practitioners can adopt before the gap is closed in models themselves. Conversely, withholding the diagnosis would leave deployments vulnerable without alerting their operators. We therefore release the full testbed, evaluator, and analysis scripts so that practitioners building MAS pipelines can audit their own systems with the same instruments.
+
+\paragraph{Model and compute use.} Experiments use \texttt{gpt-5-mini} through the OpenAI API and \texttt{deepseek-r1:32b} through a campus inference endpoint at temperature 0.1. We do not fine-tune any model and do not train new model weights, so the carbon and compute footprint of our work consists solely of inference. No human subjects participated in the experiments themselves; the manual labeling was conducted by the authors and treated as a methodological audit, not as a labeled-data collection.
+
+\paragraph{Broader impact.} The framing argument from Communication Privacy Management is normative: people maintain boundaries around private information and license its disclosure under specific use conditions. We make the analogous claim for MAS only at the mechanistic level --- handoffs preserve some propositions and weaken others. Whether a given leak constitutes a violation in deployment depends on stakeholders and context the testbed cannot capture; deployment-level claims about harm to specific user populations would require field studies we have not conducted.
