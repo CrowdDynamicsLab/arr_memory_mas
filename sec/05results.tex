@@ -92,7 +92,7 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 \subsection{Boundary Survival Decouples from Operational Survival under Compression (RQ1)}
 \label{sec:results_rq1}
 
-E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per model, Pearson $r = -0.042$ on {GPT-5-mini} and $0.086$ on DeepSeek-R1-32B. The low-$\sigma$/high-$\sigma_{\mathrm{op}}$ quadrant ($\sigma < 0.7$, $\sigma_{\mathrm{op}} > 0.9$) contains 7/180 GPT handoffs and 26/180 DeepSeek handoffs --- handoffs that preserve operational content while silently stripping boundary metadata. Mean-level statistics agree: GPT $\sigma = 0.954$ vs.\ $\sigma_{\mathrm{op}} = 0.994$; DeepSeek $\sigma = 0.880$ vs.\ $\sigma_{\mathrm{op}} = 0.980$. Per-condition, per-surface, per-marker-category, and per-domain breakdowns are in~\Cref{app:e1}; the full $\sigma$-vs-$\rho$ trajectory is in~\Cref{app:e2}.
+E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per primary model, Pearson $r = -0.042$ on GPT-5-mini and $0.086$ on DeepSeek-R1-32B. The low-$\sigma$/high-$\sigma_{\mathrm{op}}$ quadrant ($\sigma < 0.7$, $\sigma_{\mathrm{op}} > 0.9$) contains 7/180 GPT handoffs and 26/180 DeepSeek handoffs --- handoffs that preserve operational content while silently stripping boundary metadata. Qwen3-32B replicates the mean-level E1 pattern, with $\sigma = 0.915$ and $\sigma_{\mathrm{op}} = 0.986$ over 180 handoffs. Per-condition, per-surface, per-marker-category, and per-domain breakdowns are in~\Cref{app:e1}; the full $\sigma$-vs-$\rho$ trajectory is in~\Cref{app:e2}.
 
 \begin{table}[t]
   \centering
@@ -101,21 +101,21 @@ E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-han
     \toprule
     \textbf{Model} & \textbf{Condition} & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
     \midrule
-    \texttt{gpt-5-mini} & Baseline (E1) & 0.954 & 0.994 \\
-    \texttt{gpt-5-mini} & 40-word       & 0.919 & 0.990 \\
-    \texttt{gpt-5-mini} & 25-word       & 0.690 & 0.997 \\
-    \texttt{DS-R1}  & Baseline (E1) & 0.880 & 0.980 \\
-    \texttt{DS-R1}  & 40-word       & 0.774 & 0.979 \\
-    \texttt{DS-R1}  & 25-word       & 0.580 & 0.972 \\
-    \texttt{qwen3:32b}  & Baseline (E1) & 0.915 & 0.986 \\
-    \texttt{qwen3:32b}  & 40-word       & 0.711 & 1.000 \\
-    \texttt{qwen3:32b}  & 25-word       & 0.557 & 0.977 \\
+    GPT-5-mini & Baseline (E1) & 0.954 & 0.994 \\
+    GPT-5-mini & 40-word       & 0.919 & 0.990 \\
+    GPT-5-mini & 25-word       & 0.690 & 0.997 \\
+    DS-R1-32B  & Baseline (E1) & 0.880 & 0.980 \\
+    DS-R1-32B  & 40-word       & 0.774 & 0.979 \\
+    DS-R1-32B  & 25-word       & 0.580 & 0.972 \\
+    Qwen3-32B  & Baseline (E1) & 0.915 & 0.986 \\
+    Qwen3-32B  & 40-word       & 0.711 & 1.000 \\
+    Qwen3-32B  & 25-word       & 0.557 & 0.977 \\
     \bottomrule
   \end{tabular}
-  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Bootstrap 95\% CIs and the full $\sigma$-vs-$\rho$ trajectory across handoff formats are in~\Cref{app:e2}.}
+  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}.}
   \label{tab:e2_stress}
 \end{table}
-As shown in~\Cref{tab:e2_stress}, hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on both primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern in the targeted E2 replication: $\sigma$ falls from 0.711 under 40-word compression to 0.557 under 25-word compression, while $\sigma_{\mathrm{op}}$ remains 1.000/0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
+As shown in~\Cref{tab:e2_stress}, hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
 % \subsection{Marker Strength Causally Controls Downstream Leakage (RQ2)}
 % \label{sec:results_rq2}
 % E1 reveals many context dumps: sensitive facts forwarded inside internal handoff artifacts, often in fields labeled as local context or content not to forward. The next set of experiments tests whether such dumped content becomes final audience-facing leakage and what causally controls the answer. We construct three handoff variants matched on operational content --- \texttt{no\_dump\_marker} (operational fact plus explicit boundary rule, no sensitive content), \texttt{dump\_with\_marker} (operational fact plus sensitive content plus explicit marker), and \texttt{dump\_no\_marker} (same as the second but with the marker removed) --- and pass each to a downstream agent under four pressure conditions (E3, 144 prompts per model). Because operational content is held constant across variants within this controlled design, any difference in final leakage is attributable to marker presence and not to summarization style, scenario content, or pressure phrasing. E4 adds a fourth variant, \texttt{dump\_weak\_marker}, in which the sensitive content is forwarded with vague privacy language such as ``use discretion.'' E8 extends this into a continuous dose-response by adding two intermediate marker-strength levels (soft suggestion, explicit constraint) between vague language and a hard imperative.

@@ -126,6 +126,8 @@ Table~\ref{tab:prompt-counts} lists per-experiment prompt counts and the design 
   \label{tab:prompt-counts}
 \end{table*}
 
+Qwen3-32B is run for E1, E2, E8, and the E9 corrupted-allowlist stress test only; GPT-5-mini and DeepSeek-R1-32B are run for all listed experiments.
+
 \subsection{Metric Scoring Rubric and Judge Prompt}
 \label{app:judge-prompt}
 
@@ -308,11 +310,33 @@ scheduling         & 0.977 & 1.000 & 0.933 & 0.983 \\
 \end{tabular}
 \end{table}
 
+Table~\ref{tab:e1_qwen_app} reports the corresponding E1 baseline for Qwen3-32B. Qwen reproduces the same mean-level pattern: operational-fact survival remains close to ceiling across conditions, while boundary-marker survival is lower and more condition-sensitive.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Condition & $\rho$ & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
+\midrule
+\texttt{free\_text} & -1.096 & 0.939 & 1.000 \\
+\texttt{compressed\_free\_text} & -0.029 & 0.894 & 0.997 \\
+\texttt{preserve\_markers\_instruction} & -2.105 & 0.956 & 0.993 \\
+\texttt{sectioned\_template} & -1.627 & 0.941 & 0.983 \\
+\texttt{structured\_schema} & -3.039 & 0.847 & 0.958 \\
+\midrule
+Overall & -1.579 & 0.915 & 0.986 \\
+\bottomrule
+\end{tabular}
+\caption{E1 baseline handoff survival on Qwen3-32B.}
+\label{tab:e1_qwen_app}
+\end{table}
+
 \subsection{E2 Compression Stress and $\sigma$-vs-$\rho$ Trajectories}
 \label{app:e2}
 
-Tables~\ref{tab:app_e2_rho_gpt} and~\ref{tab:app_e2_rho_ds} give the full $\sigma$-vs-$\rho$ trajectories for two primary models. 
-{Qwen3-32B} was run only on the hard-budget E2 conditions and is therefore reported in the main compression table rather than the full trajectory tables.
+Tables~\ref{tab:app_e2_rho_gpt} and~\ref{tab:app_e2_rho_ds} give the full $\sigma$-vs-$\rho$ trajectories for two primary models.
+Qwen3-32B has an E1 baseline and hard-budget E2 results, but not the full primary-model $\sigma$-vs-$\rho$ trajectory across all handoff formats; its E1 baseline is reported in~\Cref{app:e1} (Table~\ref{tab:e1_qwen_app}) and its E2 rows are reported in the main compression table.
 Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content; positive $\rho$ corresponds to hard-budget compression. On two primary models, $\sigma_{\mathrm{op}}$ stays near ceiling across the trajectory while $\sigma$ falls sharply once $\rho$ becomes positive. Tables~\ref{tab:app_e2_stress_surface}--\ref{tab:app_e2_stress_domain} give the 25-word stress condition broken down by handoff surface, marker category, and domain.
 
 \begin{table}[h]

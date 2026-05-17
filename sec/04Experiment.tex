@@ -15,7 +15,7 @@ The study is organized around three questions:
   \item \textbf{RQ3.} Do lightweight mitigations prevent leakage while
   preserving task utility?
 \end{itemize}
-E1--E2 address RQ1 by measuring boundary-marker and operational-fact survival under handoff compression; E3--E5 and E8 address RQ2 by testing how marker presence and explicitness affect final leakage; E6--E7 and E9 address RQ3 by probing prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. All main experiments are run on GPT-5-mini and DeepSeek-R1-32B; we additionally replicate the core compression, marker-gradient, and corrupted-allowlist patterns on Qwen3-32B. Full experiment definitions and prompt counts are in~\Cref{app:run}.
+E1--E2 address RQ1 by measuring boundary-marker and operational-fact survival under handoff compression; E3--E5 and E8 address RQ2 by testing how marker presence and explicitness affect final leakage; E6--E7 and E9 address RQ3 by probing prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. All main experiments are run on GPT-5-mini and DeepSeek-R1-32B; we additionally replicate the core baseline, compression, marker-gradient, and corrupted-allowlist patterns on Qwen3-32B. Full experiment definitions and prompt counts are in~\Cref{app:run}.
 % \Cref{tab:rq-map} maps each experiment to the question it answers and the model coverage we use.
 % \begin{table}[t]
 %   \centering
@@ -43,7 +43,7 @@ E1--E2 address RQ1 by measuring boundary-marker and operational-fact survival un
  
 \subsection{Models}
 \label{sec:models}
-The primary model is {GPT-5-mini} \citep{singh2025openai}; cross-family replication uses DeepSeek-R1-32B \citep{deepseekai2025deepseekr1incentivizingreasoningcapability} and Qwen3-32B \citep{yang2025qwen3}. All runs use temperature 0.1, and we use matched prompts across models. GPT-5-mini was used for development and evaluator calibration; DeepSeek-R1-32B and Qwen3-32B are held out as replication targets. Qwen3-32B was added only to the core RQ1/RQ2/RQ3 patterns (E2 compression stress, E8 marker gradient, E9 corrupted-allowlist stress test).
+The primary model is {GPT-5-mini} \citep{singh2025openai}; cross-family replication uses DeepSeek-R1-32B \citep{deepseekai2025deepseekr1incentivizingreasoningcapability} and Qwen3-32B \citep{yang2025qwen3}. All runs use temperature 0.1, and we use matched prompts across models. GPT-5-mini was used for development and evaluator calibration; DeepSeek-R1-32B and Qwen3-32B are held out as replication targets. Qwen3-32B was added for E1 baseline handoff survival, E2 compression stress, E8 marker gradient, and the E9 corrupted-allowlist stress test.
 
 \subsection{Prompts and Counts}
 \label{sec:counts}
