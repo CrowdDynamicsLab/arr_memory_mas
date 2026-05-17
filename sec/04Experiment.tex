@@ -43,8 +43,8 @@ E1--E2 address RQ1 by measuring boundary-marker and operational-fact survival un
  
 \subsection{Models}
 \label{sec:models}
-The primary model is \texttt{gpt-5-mini} \citep{singh2025openai}; the cross-model replication is \texttt{deepseek-r1:32b} \citep{deepseekai2025deepseekr1incentivizingreasoningcapability}. All runs use temperature 0.1, and we use matched prompts across models. GPT-5-mini was used for development and evaluator calibration; DeepSeek-R1-32B is held out as a replication target.
- 
+The primary model is \texttt{gpt-5-mini} \citep{singh2025openai}; cross-family replication uses \texttt{deepseek-r1:32b} \citep{deepseekai2025deepseekr1incentivizingreasoningcapability} and \texttt{qwen3:32b} \citep{yang2025qwen3}. All runs use temperature 0.1, and we use matched prompts across models. GPT-5-mini was used for development and evaluator calibration; DeepSeek-R1-32B and Qwen3-32B are held out as replication targets. Qwen3-32B was added only to the core RQ1/RQ2/RQ3 patterns (E2 compression stress, E8 marker gradient, E9 corrupted-allowlist stress test).
+
 \subsection{Prompts and Counts}
 \label{sec:counts}
 E1 uses 180 stratified handoff prompts and E2 adds 72 hard-compression prompts. Downstream leakage probes use 12 matched scenarios crossed with marker variants and pressure conditions. Full prompt counts and manifests are in~\Cref{app:counts}.
