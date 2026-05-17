@@ -6,7 +6,20 @@ Multi-agent LLM systems (MAS) are increasingly asked to perform this same act of
 
 Existing privacy benchmarks~\citep{mireshghallah2023can,shao2024privacylens,zharmagambetov2025agentdam} largely test whether a single model recognizes contextual norms in a final decision, while memory-extraction~\citep{yagoubi2026agentleak,wang-etal-2025-unveiling-privacy} and inter-agent security work~\citep{he2025red,xie2026spark} study how sensitive content can be elicited or attacked. We focus on a different step: the handoff artifact produced when one agent compresses upstream interaction for another. At this step, the sensitive fact and the rule governing its use can separate.
 
-Our central finding is that handoff summaries lose information in a structured way. They preserve the operational facts a downstream agent needs to act---times, entities, decisions, constraints---but are more likely to weaken or drop the \emph{boundary metadata} that governs how those facts may be used: audience constraints (``for the coordinator only''), ownership claims (``Alex told me this privately''), hedges (``probably,'' ``not confirmed''), and disclosure caveats (``do not include this in the final report''). We call this failure mode \emph{summary collapse}. Once the marker is stripped, a surviving fact appears to downstream agents as unconstrained shared state, and they propagate it accordingly.
+Our central finding is that handoff summaries lose information in a structured way. They preserve the operational facts a downstream agent needs to act---times, entities, decisions, constraints---but are more likely to weaken or drop the \emph{boundary metadata} that governs how those facts may be used: audience constraints (``for the coordinator only''), ownership claims (``Alex told me this privately''), hedges (``probably,'' ``not confirmed''), and disclosure caveats (``do not include this in the final report''). We call this failure mode \emph{summary collapse}. Once the marker is stripped, a surviving fact appears to downstream agents as unconstrained shared state, and they propagate it accordingly.~\Cref{fig:motivating_example} shows the surface shape of this failure on a real GPT-5-mini handoff.
+
+\begin{figure}[t]
+\small
+\begin{tabular}{@{}p{0.95\linewidth}@{}}
+\toprule
+\textbf{Upstream transcript (Alex $\to$ coordinator).} ``I can't attend the Thursday 10 a.m.\ meeting. \emph{You can tell the team I'm unavailable, but please don't mention that I have an immigration lawyer appointment.}'' \\[2pt]
+\textbf{Handoff under a weak marker (``use discretion'').} ``Alex is unavailable on Thursday at 10 a.m.\ due to a personal appointment; use discretion if asked.'' \\[2pt]
+\textbf{Downstream output to the team.} ``Alex is unavailable Thursday at 10 a.m.\ due to a prior appointment with an immigration lawyer.'' \\
+\bottomrule
+\end{tabular}
+\caption{A real GPT-5-mini handoff illustrating summary collapse. The operational fact (Alex unavailable Thursday 10 a.m.) and the sensitive context (immigration lawyer appointment) both survive into the downstream output --- but the licensing rule (do not mention) does not. The fact survives without its rule.}
+\label{fig:motivating_example}
+\end{figure}
 
 We characterize summary collapse on a controlled multi-agent coordination testbed spanning seven domains, four handoff surfaces (explicit summarization, forwarding, memory replay, and report writing), and multiple handoff and downstream-pressure conditions. We introduce two operational measures---\emph{boundary-marker survival} $\sigma$, the degree to which upstream boundary-metadata propositions persist into the handoff artifact, and \emph{compression ratio} $\rho$, the proportional reduction in token length---which together separate \emph{how much} information is lost from \emph{what kind}. We organize the empirical study around three research questions: \textbf{(RQ1)} does compression selectively reduce $\sigma$ while operational-fact survival remains stable? \textbf{(RQ2)} when sensitive context is forwarded, does the strength of the boundary marker causally determine whether it becomes audience-facing leakage? \textbf{(RQ3)} do lightweight mitigation strategies prevent leakage while preserving task utility?
 
