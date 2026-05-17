@@ -210,7 +210,6 @@ This section provides the per-experiment breakdowns that support Section~\ref{se
 
 \subsection{E1 Baseline Handoff Survival}
 \label{app:e1}
-=
 \Cref{tab:app_e1_condition} reports the E1 baseline by handoff condition (this is the table previously shown in Section~\ref{sec:results_rq1}; we move it here to make room for the compression-stress table in the main text). Tables~\ref{tab:app_e1_surface_gpt}--\ref{tab:app_e1_domain} then provide per-surface, per-marker-category, and per-domain breakdowns. The overall pattern from Section~\ref{sec:results_rq1} replicates within every slice: operational content stays close to ceiling while boundary survival varies. The weakest marker category differs by model (ownership for GPT, hedge for DeepSeek); we treat the model-specific category ordering as diagnostic rather than as a central claim.
 
 \begin{table}[h]
@@ -238,7 +237,7 @@ Overall                                & 0.954 & 0.994 & 0.880 & 0.980 \\
 
 \begin{table*}[h]
 \centering
-\caption{E1 baseline survival by handoff surface on \texttt{gpt-5-mini}.}
+\caption{E1 baseline survival by handoff surface on {GPT-5-mini}.}
 \label{tab:app_e1_surface_gpt}
 \small
 \begin{tabular}{@{}lrrrr@{}}
@@ -255,7 +254,7 @@ Overall                                & 0.954 & 0.994 & 0.880 & 0.980 \\
 
 \begin{table*}[h]
 \centering
-\caption{E1 baseline survival by handoff surface on \texttt{deepseek-r1:32b}. }
+\caption{E1 baseline survival by handoff surface on DeepSeek-R1-32B. }
 \label{tab:app_e1_surface_ds}
 \small
 \begin{tabular}{@{}lrrrr@{}}
@@ -313,12 +312,12 @@ scheduling         & 0.977 & 1.000 & 0.933 & 0.983 \\
 \label{app:e2}
 
 Tables~\ref{tab:app_e2_rho_gpt} and~\ref{tab:app_e2_rho_ds} give the full $\sigma$-vs-$\rho$ trajectories for two primary models. 
-\texttt{qwen3:32b} was run only on the hard-budget E2 conditions and is therefore reported in the main compression table rather than the full trajectory tables.
+{Qwen3-32B} was run only on the hard-budget E2 conditions and is therefore reported in the main compression table rather than the full trajectory tables.
 Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content; positive $\rho$ corresponds to hard-budget compression. On two primary models, $\sigma_{\mathrm{op}}$ stays near ceiling across the trajectory while $\sigma$ falls sharply once $\rho$ becomes positive. Tables~\ref{tab:app_e2_stress_surface}--\ref{tab:app_e2_stress_domain} give the 25-word stress condition broken down by handoff surface, marker category, and domain.
 
 \begin{table}[h]
 \centering
-\caption{Full $\sigma$-vs-$\rho$ trajectory on \texttt{gpt-5-mini}.}
+\caption{Full $\sigma$-vs-$\rho$ trajectory on {GPT}.}
 \label{tab:app_e2_rho_gpt}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -338,7 +337,7 @@ Negative $\rho$ values correspond to schemas and templates that expand the upstr
 
 \begin{table}[h]
 \centering
-\caption{Full $\sigma$-vs-$\rho$ trajectory on \texttt{deepseek-r1:32b}.}
+\caption{Full $\sigma$-vs-$\rho$ trajectory on     DeepSeek-R1-32B.}
 \label{tab:app_e2_rho_ds}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -415,7 +414,7 @@ scheduling         & 0.729 & 0.821 \\
 \subsection{E3 Controlled Context Dump}
 \label{app:e3}
 
-Table~\ref{tab:app_e3_pressure} expands the E3 result by downstream pressure condition. E3 is the experiment with full manual labels (Section~\ref{app:manual}); the calibrated evaluator is exactly correct against those labels on \texttt{gpt-5-mini}. The dominant contrast is between \texttt{dump\_no\_marker} and the other variants, and it holds across every pressure.
+Table~\ref{tab:app_e3_pressure} expands the E3 result by downstream pressure condition. E3 is the experiment with full manual labels (Section~\ref{app:manual}); the calibrated evaluator is exactly correct against those labels on {GPT-5-mini}. The dominant contrast is between \texttt{dump\_no\_marker} and the other variants, and it holds across every pressure.
 
 \begin{table*}[h]
 \centering
@@ -493,7 +492,7 @@ Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream 
 \subsection{E6 Prompt-Only Mitigation}
 \label{app:e6}
 
-E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on \texttt{deepseek-R1-32B}. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_rq3}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on two primary models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
+E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on DeepSeek-R1-32B. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_rq3}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on two primary models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
 
 \begin{table*}[h]
 \centering
@@ -633,7 +632,7 @@ Total                       & 0 / 48 & 0 / 48 \\
 \subsection{Corrupted-Allowlist Stress Test for E9}
 \label{app:e9_corrupted}
 To test whether E9's effect comes from typed structure itself or from the correctness of the boundary field, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, yielding 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants preserve a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} broadens or weakens the allowlist; \textbf{typo allowlist key} misspells or obscures the boundary field; \textbf{format noise} embeds the boundary in a less consistently parseable format; and \textbf{negation flip} reverses or contradicts the intended deny/allow semantics. Table~\ref{tab:app_e9_corrupted} reports final leakage counts.
-\texttt{qwen3:32b}'s clean allowlist leaks slightly more than GPT-5-mini or \texttt{deepseek-R1-32B} (4/48 vs.\ 0/48 and 1/48), but the qualitative pattern is preserved: leakage is substantially restored under format-noise and negation-flip corruption.
+Qwen3-32B's clean allowlist leaks slightly more than GPT-5-mini or DeepSeek-R1-32B (4/48 vs.\ 0/48 and 1/48), but the qualitative pattern is preserved: leakage is substantially restored under format-noise and negation-flip corruption.
 % E9 tests an upper-bound condition in which downstream agents receive a gold-derived typed handoff: each fact carries an explicit \texttt{allowed\_audiences} field, operational facts list the downstream audience, and sensitive facts have empty allowlists. The main E9 result shows that this representation suppresses final leakage. Because the schema is hand-constructed from scenario annotations, however, E9 alone does not show whether the protective effect comes from typed formatting in general or from the correctness and machine-readability of the boundary field itself.
 
 % To isolate this, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, for 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants are designed to preserve the presence of a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} (the allowlist field is present but broadened or made less precise); \textbf{typo allowlist key} (the intended boundary field is misspelled or made less machine-readable); \textbf{format noise} (the boundary information is embedded in a noisier, less consistently parseable format); and \textbf{negation flip} (the intended deny/allow semantics are reversed or contradicted).
@@ -661,9 +660,11 @@ dump-no-marker control            & 43 / 48 (89.6\%) & 39 / 48 (81.2\%) & 36 / 4
 \bottomrule
 \end{tabular}
 \end{table*}
-The pattern supports the interpretation that E9 is not merely a schema-format artifact. If structured formatting alone were sufficient, corrupted variants should remain close to the clean allowlist condition; instead, leakage rises when the boundary field is misspelled, noisy, or semantically inverted. Severity also matters: mild scope drift increases leakage only modestly, whereas negation-flip corruption is nearly indistinguishable from the no-marker control on both model families. Clean operationalized boundaries are at least as protective as the explicit-marker control in this setting, but we do not interpret this stress test as evidence that typed allowlists outperform explicit natural-language markers. Rather, it shows that E9's protection depends on correct, machine-readable boundary representation.
+The pattern supports the interpretation that E9 is not merely a schema-format artifact. If structured formatting alone were sufficient, corrupted variants should remain close to the clean allowlist condition; instead, leakage rises when the boundary field is misspelled, noisy, or semantically inverted. Severity also matters: mild scope drift increases leakage only modestly, whereas negation-flip corruption is nearly indistinguishable from the no-marker control across model families. 
+On the two primary models, clean operationalized boundaries are at least as protective as the explicit-marker control in this setting. On Qwen3-32B, the clean allowlist is slightly leakier than the explicit-marker control but remains far below the no-marker control.
+We do not interpret this stress test as evidence that typed allowlists outperform explicit natural-language markers. Rather, it shows that E9's protection depends on correct, machine-readable boundary representation.
 
-Together with the main E9 result, this stress test clarifies the open engineering problem. Gold-derived allowlists show that downstream agents can act on operationalized boundaries when those boundaries are correct; corrupted allowlists show that this protection is brittle to extraction and representation errors. The remaining challenge is not simply to add a schema around a handoff, but to generate, validate, and enforce correct typed boundary fields from upstream interactions.
+Together with the main E9 result, this stress test clarifies the open engineering problem. Gold-derived allowlists show that correct operationalized boundaries can strongly suppress downstream leakage. Corrupted allowlists show that this protection is brittle to extraction and representation errors. The remaining challenge is not simply to add a schema around a handoff, but to generate, validate, and enforce correct typed boundary fields from upstream interactions.
 
 % The pattern supports three conclusions. First, the E9 effect is not merely a formatting artifact: if the presence of a structured schema were sufficient by itself, corrupted variants should remain close to the clean allowlist condition; instead, leakage rises substantially when the boundary field is misspelled, noisy, or semantically inverted. Second, the severity of corruption matters --- mild scope drift increases leakage only modestly, especially on DeepSeek-R1-32B, whereas negation-flip corruption is nearly indistinguishable from the no-marker control on both model families. This dose-like pattern is consistent with downstream behavior depending on whether the boundary is represented as a \emph{correct} operational constraint. Third, clean operationalized boundaries are at least as protective as the explicit-marker control in this setting; on GPT-5-mini both clean allowlist and dump-with-marker yield $0/48$, and on DeepSeek-R1-32B both yield $1/48$. We therefore do not interpret this stress test as evidence that typed allowlists outperform explicit natural-language markers in this matched setting. Instead, the stress test strengthens the narrower claim that E9's protection depends on the correctness and machine-readability of the boundary representation: when the boundary field is corrupted, leakage returns.
 
@@ -674,7 +675,7 @@ Together with the main E9 result, this stress test clarifies the open engineerin
 
 We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
 
-\paragraph{Fisher exact tests.} Table~\ref{tab:app_fisher} reports two-sided Fisher exact $p$-values for the primary \texttt{gpt-5-mini} and \texttt{deepseek-R1-32B} contrasts.
+\paragraph{Fisher exact tests.} Table~\ref{tab:app_fisher} reports two-sided Fisher exact $p$-values for the primary {GPT-5-mini} and DeepSeek-R1-32B contrasts.
 
 \begin{table*}[htbp]
 \centering
