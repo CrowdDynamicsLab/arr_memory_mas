@@ -209,9 +209,7 @@ E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague he
   \caption{E8 marker-strength gradient: final leakage by marker explicitness across models. The L1$\to$L2 transition is the sharp boundary; marker presence alone is not enough. E3/E4 endpoint counts are in~\Cref{app:e3,app:e4}; Fisher tests are in~\Cref{sec:results_robustness}.}
   \label{tab:marker_gradient}
 \end{table}
-
-As a concrete instance: under a weak-marker handoff (``use discretion''), a scheduler that should say only ``Alex has a conflict'' instead emits ``Alex has a prior appointment with an immigration lawyer'' --- operational fact preserved, licensing rule lost.
-
+% As a concrete instance: under a weak-marker handoff (``use discretion''), a scheduler that should say only ``Alex has a conflict'' instead emits ``Alex has a prior appointment with an immigration lawyer'' --- operational fact preserved, licensing rule lost.
 A no-handoff control (E5) removes the multi-agent step and delivers the upstream transcript directly to a single agent. Even the direct-full-marker condition leaks 20/48 GPT and 11/48 DeepSeek --- more than the operationalized \texttt{dump\_with\_marker} handoff (2/48 GPT) from E3. The load-bearing axis is whether the boundary is represented as an operational constraint, not whether the system has multiple agents; full E5 numbers are in~\Cref{app:e5}. Having shown that explicit constraints suppress leakage while vague markers fail, the next question is whether lightweight interventions --- prompt-only mitigation or phrase-level redaction --- can produce equivalent explicitness without hand-constructed schemas.
 % \subsection{Observations on Enforcement (RQ3)}
 % \label{sec:results_rq3}
