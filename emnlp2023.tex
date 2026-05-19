@@ -101,11 +101,11 @@
 \input{sec/06conclusions}
 \section*{Limitations}
  
-\paragraph{Synthetic transcripts and synthetic audiences.} Both the upstream transcripts and the downstream ``audiences'' in our experiments are synthetic: scenarios are hand-authored, and downstream agents are themselves LLMs. We do not measure whether real users would perceive a leaked handoff as a privacy violation in deployment, nor do we measure whether real production handoffs in deployed agent systems show the same selective fragility we observe. The framing argument from Communication Privacy Management is theoretical; the empirical leakage harm in our experiments is mediated entirely by LLM behavior, not by human stakeholders. Production-trace validation and user studies of perceived harm are necessary before any deployment-level claim.
+\paragraph{Synthetic transcripts and synthetic audiences.} Both upstream transcripts and downstream ``audiences'' are synthetic: scenarios are hand-authored, and downstream agents are themselves LLMs. The empirical leakage harm we measure is mediated entirely by LLM behavior, not by human stakeholders; production-trace validation and user studies of perceived harm are necessary before any deployment-level claim.
 
-\paragraph{Author-conducted manual audits.} The leakage detector calibration, the $\sigma$-judge audit, the weak-marker audits, and the E7 redacted-output audit were all conducted by the authors rather than by independent annotators. Inter-annotator agreement numbers are therefore not reported. Within-author labeling is appropriate as a calibration check for our specific evaluator and judge, but a standalone human-subjects dataset would require an independent annotator pool.
- 
-\paragraph{Language.} All scenarios are in English. Whether the dose-response pattern in marker explicitness, in particular the L1$\to$L2 transition, replicates in languages with different politeness conventions or modal verb systems is an open question. A natural starting point is replication on a parallel German or Japanese scenario set, where modal verb systems differ substantially from English, using the same judge with target-language prompts to test whether the L1$\to$L2 transition is language-universal or English-specific.
+\paragraph{Author-conducted manual audits.} The leakage detector calibration, the $\sigma$-judge audit, the weak-marker audits, and the E7 redacted-output audit were conducted by the authors rather than independent annotators, so inter-annotator agreement numbers are not reported. Within-author labeling is appropriate as a calibration check; a standalone human-subjects dataset would require an independent annotator pool.
+
+\paragraph{Language.} All scenarios are in English; whether the L1$\to$L2 dose-response transition replicates in languages with different politeness conventions or modal verb systems is open (see Conclusion for the concrete next step).
 
 \newpage
 \section*{Ethics Statement}
