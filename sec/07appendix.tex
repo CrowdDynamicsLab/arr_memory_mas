@@ -440,6 +440,31 @@ scheduling         & 0.729 & 0.821 \\
 \end{tabular}
 \end{table}
 
+\subsection{$\sigma$ Weighting Robustness}
+\label{app:sigma_weighting}
+
+\Cref{tab:sigma_weighting} reports $\sigma$ and $\sigma_{\mathrm{op}}$ under 25-word compression for the original four-level rubric and for two binary alternatives that remove dependence on the weakened-marker score of $0.35$. Binary-strict counts only \emph{preserved} as $1$; binary-lenient counts \emph{preserved} and \emph{paraphrased} as $1$. The gap between $\sigma$ and $\sigma_{\mathrm{op}}$ is stable across all three weighting schemes on both primary models, confirming that the selective-fragility result does not depend on the exact value assigned to the weakened-marker score.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Scheme} & \textbf{Model} & $\sigma$ & $\sigma_{\mathrm{op}}$ & \textbf{Gap} \\
+\midrule
+original       & GPT-5-mini & 0.690 & 0.997 & $-0.306$ \\
+original       & DS-R1-32B  & 0.580 & 0.972 & $-0.392$ \\
+binary strict  & GPT-5-mini & 0.722 & 1.000 & $-0.278$ \\
+binary strict  & DS-R1-32B  & 0.611 & 0.972 & $-0.361$ \\
+binary lenient & GPT-5-mini & 0.750 & 1.000 & $-0.250$ \\
+binary lenient & DS-R1-32B  & 0.681 & 1.000 & $-0.319$ \\
+\bottomrule
+\end{tabular}
+\caption{$\sigma$ weighting robustness under 25-word compression.}
+\label{tab:sigma_weighting}
+\end{table}
+
 \subsection{E3 Controlled Context Dump}
 \label{app:e3}
 
