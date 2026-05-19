@@ -14,10 +14,9 @@ Topology alone is not the cause & E5 & direct full-marker access still leaks \\
 Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed boundaries suppress leakage \\
 \bottomrule
 \end{tabular}
-\caption{Main claims and supporting experiments. Full manifests and counts are in \Cref{app:run}.}
+\caption{Main claims and supporting experiments. The four claims form a coherent account: boundary loss is structural (E1--E2), marker \emph{explicitness} (not mere presence) is the causal lever (E3--E4, E8), single-agent topology is not the cause (E5), and the operationalization axis separates partial fixes (E6--E7) from complete suppression in the gold-derived probe (E9). Full manifests and counts are in~\Cref{app:run}.}
 \label{tab:main_claim}
 \end{table*}
-\hs{[STRUCTURE] Two-sentence caption with no takeaway. Expand to be self-contained: state what the reader should conclude. E.g., ``Together, the four claims form a coherent account: boundary loss is structural (E1--E2), marker explicitness is the causal lever (E3--E8), and the operationalization axis separates partial fixes (E6--E7) from complete suppression (E9).''}
 % \begin{table*}[t]
 %   \centering
 %   \small
@@ -116,8 +115,7 @@ E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-han
   \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}.}
   \label{tab:e2_stress}
 \end{table}
-As shown in~\Cref{tab:e2_stress}, hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
-\hs{[STYLE] Passive table reference. Rewrite in active voice: ``\Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern.'' rather than ``As shown in \Cref{tab:e2_stress}...''}
+\Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
 \hs{[STRUCTURE] Add a bridge sentence connecting RQ1 to RQ2. RQ1 established that boundary markers are selectively stripped under compression; RQ2 asks whether that loss---and the strength of whatever survives---causally controls audience-facing leakage. E.g., ``Having established selective marker loss, the next question is whether that loss and the explicitness of what survives causally determine whether forwarded content becomes final leakage.''}
 % \subsection{Marker Strength Causally Controls Downstream Leakage (RQ2)}
 % \label{sec:results_rq2}
