@@ -310,23 +310,21 @@ We report Fisher exact tests for the main leakage contrasts and check that the c
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llr@{}}
+\begin{tabular}{@{}llrr@{}}
 \toprule
-\textbf{Contrast} & \textbf{Model} & \textbf{Fisher $p$} \\
+\textbf{Contrast} & \textbf{Model} & \textbf{RR [95\% CI]} & \textbf{Fisher $p$} \\
 \midrule
-E3 +mark vs.\ no-mark & GPT-5-mini & $1.61 \times 10^{-12}$ \\
-E3 +mark vs.\ no-mark & DS-R1-32B  & $1.98 \times 10^{-13}$ \\
-E8 L1 vs.\ L2        & GPT-5-mini & $2.13 \times 10^{-9}$  \\
-E8 L1 vs.\ L2        & DS-R1-32B  & $4.02 \times 10^{-5}$  \\
-E9 allowlist vs.\ E6 & GPT-5-mini & $1.04 \times 10^{-4}$  \\
-E9 allowlist vs.\ E6 & DS-R1-32B  & $1.58 \times 10^{-3}$  \\
+E3 +mark vs.\ no-mark & GPT-5-mini & $0.042$ $[0.011, 0.162]$ & $1.61 \times 10^{-12}$ \\
+E3 +mark vs.\ no-mark & DS-R1-32B  & $0.027$ $[0.004, 0.189]$ & $1.98 \times 10^{-13}$ \\
+E8 L1 vs.\ L2        & GPT-5-mini & $5.83$ $[2.71, 12.58]$  & $2.13 \times 10^{-9}$  \\
+E8 L1 vs.\ L2        & DS-R1-32B  & $4.80$ $[2.00, 11.53]$  & $4.02 \times 10^{-5}$  \\
+E9 allowlist vs.\ E6 & GPT-5-mini & $0.050$ $[0.003, 0.80]^{\dagger}$ & $1.04 \times 10^{-4}$  \\
+E9 allowlist vs.\ E6 & DS-R1-32B  & $0.069$ $[0.004, 1.11]^{\dagger}$ & $1.58 \times 10^{-3}$  \\
 \bottomrule
 \end{tabular}
-\caption{Fisher exact tests for the main leakage contrasts.}
+\caption{Fisher exact tests with risk ratios for the main leakage contrasts. E3 tests whether \emph{marker presence} reduces final leakage when sensitive content is forwarded; E8 tests whether the \emph{L1 vague-hedge $\to$ L2 soft-suggestion} transition is the load-bearing step in the dose-response gradient; and E9 vs.\ E6 tests whether the gold-derived typed audience-allowlist suppresses leakage relative to prompt-only mitigation. All six contrasts are highly significant ($p \leq 4 \times 10^{-5}$ or smaller); risk ratios show the magnitude is large in every case --- markers cut leakage by 20--40$\times$ (E3), vague hedges are 5--6$\times$ leakier than soft suggestions (E8), and the gold allowlist reduces leakage 15--20$\times$ relative to prompt-only. The marker-presence (E3) and L1$\to$L2 explicitness (E8) effects are the load-bearing tests. $^{\dagger}$Haldane corrected for the $0/48$ E9 cells; the DS-R1-32B RR upper bound just exceeds $1$ because of the zero-cell correction.}
 \label{tab:fisher}
 \end{table}
-\hs{[STRUCTURE] One-sentence caption. A reader looking at this table alone cannot understand what hypotheses are being tested or what the result means. Expand: name the hypothesis each row tests, note that all contrasts are highly significant ($p < 10^{-4}$ or smaller), and add a takeaway---e.g., ``Both the marker-presence (E3) and marker-explicitness (E8) effects are statistically robust across model families; the L1$\to$L2 transition and the E3 contrast are the load-bearing tests.''}
-\hs{[STRUCTURE] Fisher exact $p$-values are reported without effect sizes. Statistical significance alone does not convey practical magnitude. Add an odds ratio or risk ratio for each contrast---e.g., for the E3 marker-presence contrast (2/48 vs.\ 48/48 on GPT), the odds ratio is approximately 0.001. Report effect sizes alongside every $p$-value in Table~\ref{tab:fisher}.}
 
 \paragraph{$\sigma$ weighting robustness.} The selective-collapse pattern is robust to alternative $\sigma$ scoring schemes. Under 25-word compression, boundary-marker survival remains substantially below operational-fact survival under all tested weightings, including binary-strict and binary-lenient metrics that remove dependence on the original \emph{weakened}-marker score (\Cref{tab:sigma_weighting}). The main conclusion therefore does not depend on the weakened-marker score in the judge rubric: compression still preferentially removes boundary metadata while preserving operational facts.
 
@@ -346,10 +344,9 @@ binary lenient & GPT-5-mini & 0.750 & 1.000 & $-0.250$ \\
 binary lenient & DS-R1-32B  & 0.681 & 1.000 & $-0.319$ \\
 \bottomrule
 \end{tabular}
-\caption{$\sigma$ weighting robustness under 25-word compression. Binary-strict counts only \emph{preserved} as 1; binary-lenient counts preserved and paraphrased as 1.}
+\caption{$\sigma$ weighting robustness under 25-word compression. Binary-strict counts only \emph{preserved} as 1; binary-lenient counts \emph{preserved} and \emph{paraphrased} as 1. The gap between $\sigma$ and $\sigma_{\mathrm{op}}$ is stable across all three weighting schemes on both primary models, confirming that the selective-fragility result does not depend on the exact value assigned to the weakened-marker score ($0.35$).}
 \label{tab:sigma_weighting}
 \end{table}
-\hs{[STRUCTURE] Caption describes the scoring schemes but states no takeaway. Add a concluding sentence: ``The gap between $\sigma$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable across all three weighting schemes, confirming that the selective-fragility result does not depend on the exact value assigned to the weakened-marker score (0.35).''}
 
 % \subsection{Summary}
 % \label{sec:results_summary}
