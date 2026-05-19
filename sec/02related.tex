@@ -8,7 +8,8 @@ AgentLeak shows violations frequently occur in internal inter-agent channels rat
  
 \paragraph{Memory and inter-agent communication as channels.}
 MEXTRA demonstrates black-box extraction of stored user--agent interactions~\citep{wang2025unveiling}; Prompt Infection~\citep{lee2024prompt}, MASLeak~\citep{wang2025ip}, and Agent-in-the-Middle~\citep{he2025red} show inter-agent channels can be exploited to self-replicate instructions, extract proprietary system information, or compromise an entire MAS. We adopt the same channel-level lens but study a non-adversarial failure: when one agent's output becomes another's input via summarization, what governance information survives, what is silently lost, and when does that loss become final audience-facing leakage?
- 
+\hs{[STRUCTURE] This theme ends without a contrast statement. The paragraph describes adversarial extraction from memory and inter-agent channels (MEXTRA, Prompt Infection, MASLeak, Agent-in-the-Middle) but does not state how this paper differs. The closing sentence poses a question rather than a contrast. Add: ``Unlike these adversarial settings, we study a non-adversarial failure: the cross-phase summarization step strips boundary metadata even when no attacker is present and the sensitive information arrives with an explicit governing marker.''}
+
 \paragraph{Summarization fidelity.}
 Abstractive summarization has long been known to drop hedges, attributions, and qualifying conditions~\citep{maynez2020faithfulness}. Our finding is the multi-agent privacy analogue: the propositions most vulnerable to compression are often those that license or constrain the propositions that survive, leaving the downstream agent with the fact but not the rule.
  

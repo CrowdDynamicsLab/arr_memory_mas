@@ -17,6 +17,7 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 \caption{Main claims and supporting experiments. Full manifests and counts are in \Cref{app:run}.}
 \label{tab:main_claim}
 \end{table*}
+\hs{[STRUCTURE] Two-sentence caption with no takeaway. Expand to be self-contained: state what the reader should conclude. E.g., ``Together, the four claims form a coherent account: boundary loss is structural (E1--E2), marker explicitness is the causal lever (E3--E8), and the operationalization axis separates partial fixes (E6--E7) from complete suppression (E9).''}
 % \begin{table*}[t]
 %   \centering
 %   \small
@@ -116,6 +117,8 @@ E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-han
   \label{tab:e2_stress}
 \end{table}
 As shown in~\Cref{tab:e2_stress}, hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
+\hs{[STYLE] Passive table reference. Rewrite in active voice: ``\Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern.'' rather than ``As shown in \Cref{tab:e2_stress}...''}
+\hs{[STRUCTURE] Add a bridge sentence connecting RQ1 to RQ2. RQ1 established that boundary markers are selectively stripped under compression; RQ2 asks whether that loss---and the strength of whatever survives---causally controls audience-facing leakage. E.g., ``Having established selective marker loss, the next question is whether that loss and the explicitness of what survives causally determine whether forwarded content becomes final leakage.''}
 % \subsection{Marker Strength Causally Controls Downstream Leakage (RQ2)}
 % \label{sec:results_rq2}
 % E1 reveals many context dumps: sensitive facts forwarded inside internal handoff artifacts, often in fields labeled as local context or content not to forward. The next set of experiments tests whether such dumped content becomes final audience-facing leakage and what causally controls the answer. We construct three handoff variants matched on operational content --- \texttt{no\_dump\_marker} (operational fact plus explicit boundary rule, no sensitive content), \texttt{dump\_with\_marker} (operational fact plus sensitive content plus explicit marker), and \texttt{dump\_no\_marker} (same as the second but with the marker removed) --- and pass each to a downstream agent under four pressure conditions (E3, 144 prompts per model). Because operational content is held constant across variants within this controlled design, any difference in final leakage is attributable to marker presence and not to summarization style, scenario content, or pressure phrasing. E4 adds a fourth variant, \texttt{dump\_weak\_marker}, in which the sensitive content is forwarded with vague privacy language such as ``use discretion.'' E8 extends this into a continuous dose-response by adding two intermediate marker-strength levels (soft suggestion, explicit constraint) between vague language and a hard imperative.
@@ -190,6 +193,7 @@ We construct matched downstream tests in which operational content is held const
 
 \paragraph{Marker strength: dose-response.}
 E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague hedge ``use discretion,'' L2 soft suggestion ``please consider not disclosing,'' L3 explicit constraint ``X is confidential,'' L4 imperative ``do not disclose X''), holding all other content constant. \Cref{tab:marker_gradient} shows the curve is sharply non-linear: vague hedges still leak 35/48 GPT and 24/48 DeepSeek, while soft suggestions drop leakage to 6/48 and 5/48. Explicit constraints and hard imperatives are nearly equivalent. The transition between L1 and L2 is the load-bearing one --- protection comes from the marker being readable as an operational instruction, not from the use of privacy-sounding language; the L1$\to$L2 drop is significant on {GPT-5-mini} and DeepSeek-R1-32B (\Cref{sec:results_robustness}), and     Qwen3-32B replicates the dose-response with an even sharper drop.
+\hs{[CONTENT] This paragraph reports E8 L1 vague hedge as 35/48 GPT (73\%) and 24/48 DeepSeek (50\%), while the preceding paragraph (E4) reports \texttt{dump\_weak\_marker} as 44/48 GPT (92\%) and 38/48 DeepSeek (79\%)---both described as ``use discretion'' language in the same RQ2 subsection. The gap is 9 counts on GPT and 14 counts on DeepSeek; too large to attribute to temperature variation at 0.1. A reader cross-referencing the two paragraphs will see inconsistent headline rates for what appears to be the same condition. The likely explanation is that E4's counts are post-manual-audit (which found additional paraphrase leaks, raising the heuristic 37/48 to 44/48 on GPT per Appendix~\ref{app:e4}), while E8 L1 uses only the heuristic detector with no equivalent audit. Add a clarifying sentence here---e.g., ``E8 L1 leakage rates use the heuristic detector only and are therefore not directly comparable to the post-audit E4 counts reported above.''---so the comparison is not misleading.}
 
 \begin{table}[t]
   \centering
@@ -214,6 +218,7 @@ E8 extends these endpoints into a five-level gradient (L0 no marker, L1 vague he
 In a scheduling scenario, the upstream boundary instructs only that Alex is unavailable, with the explicit caveat not to mention an immigration lawyer appointment. Under a weak-marker handoff (``use discretion''), the downstream output states that Alex is unavailable ``due to a prior appointment with an immigration lawyer'' --- both the operational fact and the sensitive context survive, but the licensing rule does not.
 
 A no-handoff control (E5) removes the multi-agent step and delivers the upstream transcript directly to a single agent. Even the direct-full-marker condition leaks 20/48 GPT and 11/48 DeepSeek --- more than the operationalized \texttt{dump\_with\_marker} handoff (2/48 GPT) from E3. The load-bearing axis is whether the boundary is represented as an operational constraint, not whether the system has multiple agents; full E5 numbers are in~\Cref{app:e5}.
+\hs{[STRUCTURE] Add a bridge sentence connecting RQ2 to RQ3. RQ2 showed that marker explicitness is the causal lever; RQ3 asks whether lightweight interventions can enforce that explicitness automatically. E.g., ``Having shown that explicit constraints suppress leakage while vague markers fail, the next question is whether prompt-only mitigations or phrase-level redaction can produce equivalent explicitness without hand-constructed schemas.''}
 % \subsection{Observations on Enforcement (RQ3)}
 % \label{sec:results_rq3}
  
@@ -325,6 +330,8 @@ E9 allowlist vs.\ E6 & DS-R1-32B  & $1.58 \times 10^{-3}$  \\
 \caption{Fisher exact tests for the main leakage contrasts.}
 \label{tab:fisher}
 \end{table}
+\hs{[STRUCTURE] One-sentence caption. A reader looking at this table alone cannot understand what hypotheses are being tested or what the result means. Expand: name the hypothesis each row tests, note that all contrasts are highly significant ($p < 10^{-4}$ or smaller), and add a takeaway---e.g., ``Both the marker-presence (E3) and marker-explicitness (E8) effects are statistically robust across model families; the L1$\to$L2 transition and the E3 contrast are the load-bearing tests.''}
+\hs{[STRUCTURE] Fisher exact $p$-values are reported without effect sizes. Statistical significance alone does not convey practical magnitude. Add an odds ratio or risk ratio for each contrast---e.g., for the E3 marker-presence contrast (2/48 vs.\ 48/48 on GPT), the odds ratio is approximately 0.001. Report effect sizes alongside every $p$-value in Table~\ref{tab:fisher}.}
 
 \paragraph{$\sigma$ weighting robustness.} The selective-collapse pattern is robust to alternative $\sigma$ scoring schemes. Under 25-word compression, boundary-marker survival remains substantially below operational-fact survival under all tested weightings, including binary-strict and binary-lenient metrics that remove dependence on the original \emph{weakened}-marker score (\Cref{tab:sigma_weighting}). The main conclusion therefore does not depend on the weakened-marker score in the judge rubric: compression still preferentially removes boundary metadata while preserving operational facts.
 
@@ -347,6 +354,7 @@ binary lenient & DS-R1-32B  & 0.681 & 1.000 & $-0.319$ \\
 \caption{$\sigma$ weighting robustness under 25-word compression. Binary-strict counts only \emph{preserved} as 1; binary-lenient counts preserved and paraphrased as 1.}
 \label{tab:sigma_weighting}
 \end{table}
+\hs{[STRUCTURE] Caption describes the scoring schemes but states no takeaway. Add a concluding sentence: ``The gap between $\sigma$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable across all three weighting schemes, confirming that the selective-fragility result does not depend on the exact value assigned to the weakened-marker score (0.35).''}
 
 % \subsection{Summary}
 % \label{sec:results_summary}

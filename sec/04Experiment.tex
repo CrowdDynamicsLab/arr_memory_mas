@@ -1,7 +1,8 @@
 \section{Experimental Setup}
 \label{sec:setup}
 We next specify the research questions, models, prompt counts, leakage definition, evaluator protocol, and reporting conventions. Implementation details beyond what is needed to reproduce the main results are deferred to~\cref{app:dataset} and~\cref{app:run}.
- 
+\hs{[STRUCTURE] ``We next specify...'' announces the section contents rather than making a claim. Rewrite: e.g., ``The experimental design uses three primary model families across a stratified 180-prompt baseline, controlled downstream causal tests, and a human-validated judge ($\kappa = 0.74$) to support the three claims in Section~\ref{sec:results}.'' Then preview the subsections briefly.}
+
 \subsection{Research Questions and Experiments}
 \label{sec:rqs}
  
@@ -16,6 +17,7 @@ The study is organized around three questions:
   preserving task utility?
 \end{itemize}
 E1--E2 address RQ1 by measuring boundary-marker and operational-fact survival under handoff compression; E3--E5 and E8 address RQ2 by testing how marker presence and explicitness affect final leakage; E6--E7 and E9 address RQ3 by probing prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. All main experiments are run on GPT-5-mini and DeepSeek-R1-32B; we additionally replicate the core baseline, compression, marker-gradient, and corrupted-allowlist patterns on Qwen3-32B. Full experiment definitions and prompt counts are in~\Cref{app:run}.
+\hs{[STRUCTURE] Add a bridge sentence connecting this subsection to \S\ref{sec:models}. The RQ-to-experiment mapping has just been given; the next subsection introduces the models. E.g., ``The three model families below are chosen to span two training pipelines and enable cross-family replication of the key contrasts.''}
 % \Cref{tab:rq-map} maps each experiment to the question it answers and the model coverage we use.
 % \begin{table}[t]
 %   \centering
