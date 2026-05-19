@@ -132,7 +132,8 @@ Qwen3-32B is run for E1, E2, E8, and the E9 corrupted-allowlist stress test only
 \label{app:judge-prompt}
 
 Boundary-marker survival and operational-fact survival are scored using the same four-level rubric. For each gold item $i$, the judge assigns
-\[
+\begin{equation}
+\label{eq:judge_rubric}
 s_i =
 \begin{cases}
 1.00 & \text{preserved} \\
@@ -140,13 +141,12 @@ s_i =
 0.35 & \text{weakened} \\
 0.00 & \text{absent.}
 \end{cases}
-\]
-\hs{[STYLE] Number this equation --- use \texttt{\textbackslash begin\{equation\}} rather than \texttt{\textbackslash[...\textbackslash]}. Numbered equations are required for cross-referencing.}
+\end{equation}
 For a handoff with boundary-marker set $M_u$, boundary-marker survival is
-\[
+\begin{equation}
+\label{eq:sigma}
 \sigma = \frac{1}{|M_u|}\sum_{m_i \in M_u} s_i.
-\]
-\hs{[STYLE] Number this equation --- use \texttt{\textbackslash begin\{equation\}} rather than \texttt{\textbackslash[...\textbackslash]}. Numbered equations are required for cross-referencing.}
+\end{equation}
 Operational-fact survival $\sigma_{\mathrm{op}}$ is computed analogously over the set of gold operational facts. We use the same rubric for both scores so that differences between $\sigma$ and $\sigma_{\mathrm{op}}$ reflect which type of proposition survives, not a difference in scoring scale.
 
 The judge prompt used for both $\sigma$ and $\sigma_{\mathrm{op}}$ is shown below.
@@ -494,8 +494,7 @@ Total                       & 44 / 48 & 38 / 48 \\
 \subsection{E5 No-Handoff Single-Agent Control}
 \label{app:e5}
 
-Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream pressure. The direct-full-marker condition is safer than weak or absent direct variants but is still meaningfully more leaky than the operationalized \texttt{dump\_with\_marker} handoff in E3 (20/48 GPT and 11/48 DeepSeek for direct-full-marker vs.\ 2/48 and 1/48 for \texttt{dump\_with\_marker}). This is the empirical content of the Section~\ref{sec:results_rq2} claim that the load-bearing axis is whether the boundary is operationalized, not whether the system uses one or two agents.
-\hs{[STYLE] Ambiguous pronoun: add a noun after ``This'' to clarify what you are referring to. E.g., ``This contrast is the empirical content\ldots'' or ``This finding is the empirical content\ldots''}
+Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream pressure. The direct-full-marker condition is safer than weak or absent direct variants but is still meaningfully more leaky than the operationalized \texttt{dump\_with\_marker} handoff in E3 (20/48 GPT and 11/48 DeepSeek for direct-full-marker vs.\ 2/48 and 1/48 for \texttt{dump\_with\_marker}). This contrast is the empirical content of the Section~\ref{sec:results_rq2} claim that the load-bearing axis is whether the boundary is operationalized, not whether the system uses one or two agents.
 
 \begin{table*}[h]
 \centering
