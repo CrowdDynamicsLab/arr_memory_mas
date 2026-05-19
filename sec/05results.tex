@@ -303,27 +303,7 @@ Taken together, prose descriptions and exact-string redaction are insufficient, 
 
 We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
 
-\paragraph{Fisher exact tests.} \Cref{tab:fisher} reports two-sided Fisher exact $p$-values for the primary {GPT-5-mini} and DeepSeek-R1-32B contrasts. Removing explicit markers sharply increases leakage in E3, and replacing vague caution language with disclosure-specific suggestions produces the largest drop in the E8 marker gradient.
-
-\begin{table}[t]
-\centering
-\small
-\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}llrr@{}}
-\toprule
-\textbf{Contrast} & \textbf{Model} & \textbf{RR [95\% CI]} & \textbf{Fisher $p$} \\
-\midrule
-E3 +mark vs.\ no-mark & GPT-5 & $0.042$ $[0.011, 0.162]$ & $1.6\mathrm{e}{-}12$ \\
-E3 +mark vs.\ no-mark & DS-R1 & $0.027$ $[0.004, 0.189]$ & $2.0\mathrm{e}{-}13$ \\
-E8 L1 vs.\ L2        & GPT-5 & $5.83$ $[2.71, 12.58]$  & $2.1\mathrm{e}{-}9$  \\
-E8 L1 vs.\ L2        & DS-R1 & $4.80$ $[2.00, 11.53]$  & $4.0\mathrm{e}{-}5$  \\
-E9 allowlist vs.\ E6 & GPT-5 & $0.050$ $[0.003, 0.80]^{\dagger}$ & $1.0\mathrm{e}{-}4$  \\
-E9 allowlist vs.\ E6 & DS-R1  & $0.069$ $[0.004, 1.11]^{\dagger}$ & $1.6\mathrm{e}{-}3$  \\
-\bottomrule
-\end{tabular}
-\caption{Fisher exact tests with risk ratios for the main leakage contrasts. E3 tests whether \emph{marker presence} reduces final leakage when sensitive content is forwarded; E8 tests whether the \emph{L1 vague-hedge $\to$ L2 soft-suggestion} transition is the load-bearing step in the dose-response gradient; and E9 vs.\ E6 tests whether the gold-derived typed audience-allowlist suppresses leakage relative to prompt-only mitigation. All six contrasts are highly significant ($p \leq 4 \times 10^{-5}$ or smaller); risk ratios show the magnitude is large in every case --- markers cut leakage by 20--40$\times$ (E3), vague hedges are 5--6$\times$ leakier than soft suggestions (E8), and the gold allowlist reduces leakage 15--20$\times$ relative to prompt-only. The marker-presence (E3) and L1$\to$L2 explicitness (E8) effects are the load-bearing tests. $^{\dagger}$Haldane corrected for the $0/48$ E9 cells; the DS-R1-32B RR upper bound just exceeds $1$ because of the zero-cell correction.}
-\label{tab:fisher}
-\end{table}
+\paragraph{Fisher exact tests.} All six main contrasts are highly significant under two-sided Fisher exact tests, with large risk-ratio effects: removing the explicit marker in E3 makes leakage $20$--$40\times$ more likely; the L1$\to$L2 explicitness transition in E8 makes vague hedges $5$--$6\times$ leakier than soft suggestions; and the gold-derived typed allowlist in E9 is $15$--$20\times$ protective relative to prompt-only mitigation (all $p \leq 1.6\mathrm{e}{-}3$). Per-contrast risk ratios with $95\%$ CIs and exact $p$-values are in \Cref{app:fisher}.
 
 \paragraph{$\sigma$ weighting robustness.} The selective-fragility gap between $\sigma$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable under both binary-strict and binary-lenient weightings of the four-level rubric, confirming that the result does not depend on the weakened-marker score of $0.35$ (\Cref{app:sigma_weighting}).
 
