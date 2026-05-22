@@ -207,7 +207,12 @@ Annotation was conducted by two of the authors, blinded to handoff condition. An
 
 The unified written instructions actually issued to annotators --- including the four-level rubric with worked examples, the E3 binary final-leakage criterion with worked examples, decision rules, input/output format, blinding procedure, and operational details --- are released alongside the code in the supplementary materials. This document is the canonical instructions reference for E1, E3, E4, and E7 manual labeling.
 
-E3 is fully manually labeled. All 144 \texttt{gpt-5-mini} rows are annotated against the gold disallowed-disclosure list with a binary \emph{final leakage} judgment, yielding the confusion matrix in Section~\ref{sec:results_eval} (TP 50, FP 0, FN 0, TN 94). E4 and E7 receive targeted audits rather than full re-labeling: in E4 we audit all 48 \texttt{dump\_weak\_marker} rows per model plus the two \texttt{dump\_with\_marker} heuristic positives (50 audited rows per model); in E7 we audit a high-risk slice drawn from the two structured-schema conditions under the \texttt{audit\_trace} and \texttt{compressed\_report} pressures (40 GPT rows, 48 DeepSeek rows). 
+E3 is fully manually labeled. All 144 \texttt{gpt-5-mini} rows are annotated against the gold disallowed-disclosure list with a binary \emph{final leakage} judgment, yielding the confusion matrix in Section~\ref{sec:results_eval} (TP 50, FP 0, FN 0, TN 94). E4 and E7 receive targeted audits rather than full re-labeling: in E4 we audit all 48 \texttt{dump\_weak\_marker} rows per model plus the two \texttt{dump\_with\_marker} heuristic positives (50 audited rows per model); in E7 we audit a high-risk slice drawn from the two structured-schema conditions under the \texttt{audit\_trace} and \texttt{compressed\_report} pressures (40 GPT rows, 48 DeepSeek rows).
+
+\subsection{Code, Data, and Package Settings}
+\label{app:code_data}
+
+The full \textsc{Bound-Handoff} testbed (all 36 scenarios in JSON form), the calibrated leakage detector, the LLM-judge harness, the redaction pipeline, the manual-labeling instructions, and all analysis scripts used to produce every table and figure in this paper are included in the supplementary materials. The supplement also ships a pinned \texttt{requirements.txt} specifying the Python package versions used: \texttt{numpy}, \texttt{pandas}, \texttt{scipy} (for \texttt{scipy.stats.fisher\_exact} with Haldane correction and \texttt{scipy.stats.chi2} for the Cochran--Mantel--Haenszel test), \texttt{matplotlib}, and \texttt{requests}. The leakage detector relies only on Python's standard-library \texttt{re} module with the word-boundary regex specification given in Appendix~\ref{app:detector}. All model inference uses temperature 0.1; LLM-judge calls use GPT-5.5 Thinking at temperature 0 with the prompt template in Appendix~\ref{app:judge-prompt}. Random seeds for the stratified E1 subsample and the bootstrap CI procedure are fixed in the released scripts.
 
 % =====================================================================
 
@@ -502,6 +507,8 @@ The numeric mapping in Eq.~\ref{eq:judge_rubric} is convenient but ad hoc. To ch
 \Cref{tab:ordinal_label_proportions_baseline} gives the corresponding per-condition proportions for the E1 baseline sweep on all three models. The pattern is consistent with the body: at the unstressed baseline, both marker and operational item distributions are dominated by \emph{preserved}, and the gap is modest; under the compressed and structured-schema conditions the \emph{paraphrased} and \emph{absent} mass on markers grows while operational items move only into \emph{paraphrased}.
 
 \input{tables/ordinal_label_proportions_baseline.tex}
+
+\input{tables/cmh_results.tex}
 
 \subsection{E3 Controlled Context Dump}
 \label{app:e3}
