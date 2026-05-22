@@ -1,6 +1,6 @@
 \section{Results}
 \label{sec:results}
-We organize the findings around three claims, summarized in~\Cref{tab:main_claim}. First, boundary-marker survival $\sigma$ and operational-fact survival $\sigma_{\mathrm{op}}$ \emph{decouple} at the handoff level under compression: they are nearly uncorrelated, and a substantial fraction of handoffs preserve operational content while stripping boundary metadata. Second, marker \emph{strength} causally determines whether forwarded sensitive content becomes audience-facing leakage --- vague hedges fail almost as badly as no marker, while explicit constraints reduce leakage by an order of magnitude. Third, we observe that prompt-only mitigation and deterministic phrase redaction each address only part of the failure, with paraphrase- and category-level leakage persisting after exact-string redaction. 
+We organize the findings around three claims, summarized in~\Cref{tab:main_claim}. First, boundary-marker survival $\sigma_b$ and operational-fact survival $\sigma_{\mathrm{op}}$ \emph{decouple} at the handoff level under compression: they are nearly uncorrelated, and a substantial fraction of handoffs preserve operational content while stripping boundary metadata. Second, marker \emph{strength} causally determines whether forwarded sensitive content becomes audience-facing leakage --- vague hedges fail almost as badly as no marker, while explicit constraints reduce leakage by an order of magnitude. Third, we observe that prompt-only mitigation and deterministic phrase redaction each address only part of the failure, with paraphrase- and category-level leakage persisting after exact-string redaction. 
 \begin{table*}[t]
 \centering
 \small
@@ -8,7 +8,7 @@ We organize the findings around three claims, summarized in~\Cref{tab:main_claim
 \toprule
 Claim & Evidence & Headline \\
 \midrule
-Selective handoff loss & E1--E2 & $\sigma$ decouples from $\sigma_{\mathrm{op}}$; hard compression widens gap \\
+Selective handoff loss & E1--E2 & $\sigma_b$ decouples from $\sigma_{\mathrm{op}}$; hard compression widens gap \\
 Marker strength controls leakage & E3--E4/E8 & vague markers leak far more than explicit constraints \\
 Topology alone is not the cause & E5 & direct full-marker access still leaks \\
 Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed boundaries suppress leakage \\
@@ -24,8 +24,8 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 %     \toprule
 %     \textbf{Experiment} & \textbf{Scale} & \textbf{Primary metric} & \textbf{Headline result} \\
 %     \midrule
-%     E1 Handoff survival       & 36 scenarios, 5 conditions, 180 prompts; both models     & $\sigma$, $\sigma_{\mathrm{op}}$, task success & $r(\sigma, \sigma_{\mathrm{op}})$ near zero on both models; low-$\sigma$ / high-$\sigma_{\mathrm{op}}$ quadrant populated \\
-%     E2 Compression stress     & 36 scenarios $\times$ 2 budgets; both models             & $\sigma$ vs.\ $\sigma_{\mathrm{op}}$ under hard compression & 25-word: GPT $\sigma=0.690$ vs.\ $\sigma_{\mathrm{op}}=0.997$; DeepSeek $\sigma=0.580$ vs.\ $\sigma_{\mathrm{op}}=0.972$ \\
+%     E1 Handoff survival       & 36 scenarios, 5 conditions, 180 prompts; both models     & $\sigma_b$, $\sigma_{\mathrm{op}}$, task success & $r(\sigma_b, \sigma_{\mathrm{op}})$ near zero on both models; low-$\sigma_b$ / high-$\sigma_{\mathrm{op}}$ quadrant populated \\
+%     E2 Compression stress     & 36 scenarios $\times$ 2 budgets; both models             & $\sigma_b$ vs.\ $\sigma_{\mathrm{op}}$ under hard compression & 25-word: GPT $\sigma_b=0.690$ vs.\ $\sigma_{\mathrm{op}}=0.997$; DeepSeek $\sigma_b=0.580$ vs.\ $\sigma_{\mathrm{op}}=0.972$ \\
 %     E3 Context-dump causal test & 12 scenarios $\times$ 3 variants $\times$ 4 pressures (144 prompts/model) & Final audience-facing leakage & no-dump 0/48 (both); dump+marker 2/48 GPT, 1/48 DeepSeek; dump-no-marker 48/48 GPT, 37/48 DeepSeek \\
 %     E4 Weak-marker test       & 12 scenarios $\times$ 4 variants $\times$ 4 pressures (192 prompts/model) & Manual leakage labels for weak marker & vague markers leak 44/48 GPT, 38/48 DeepSeek \\
 %     E5 No-handoff control     & 12 scenarios $\times$ 3 direct variants $\times$ 4 pressures (144 prompts/model) & Final leakage without an intermediate handoff & direct+full marker still leaks 20/48 GPT, 11/48 DeepSeek \\
@@ -42,7 +42,7 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 % \subsection{Boundary Survival Decouples from Operational Survival under Compression (RQ1)}
 % \label{sec:results_rq1}
 % \paragraph{Decoupling at the handoff level.}
-% E1 sweeps the 180-prompt stratified subset on both models. Mean-level statistics are consistent with our central claim (Table~\ref{tab:e1_baseline}): GPT $\sigma = 0.954$ vs.\ $\sigma_{\mathrm{op}} = 0.994$; DeepSeek $\sigma = 0.880$ vs.\ $\sigma_{\mathrm{op}} = 0.980$. The stronger evidence is at the \emph{individual handoff level}: across 180 handoffs per model, $\sigma$ and $\sigma_{\mathrm{op}}$ are nearly uncorrelated (Pearson $r = -0.042$ on GPT, $r = 0.086$ on DeepSeek; Spearman $\rho = -0.020$ and $0.131$). The low-$\sigma$ / high-$\sigma_{\mathrm{op}}$ quadrant ($\sigma < 0.7$, $\sigma_{\mathrm{op}} > 0.9$) is populated by 7/180 GPT handoffs and 26/180 DeepSeek handoffs --- concrete examples of operational content surviving intact while boundary metadata is silently stripped. Because $\sigma_{\mathrm{op}}$ stays near ceiling regardless of where $\sigma$ lands, the failure is not a generic compression-loss effect; it is selective. Full per-handoff $(\sigma, \sigma_{\mathrm{op}})$ data is released alongside the paper.
+% E1 sweeps the 180-prompt stratified subset on both models. Mean-level statistics are consistent with our central claim (Table~\ref{tab:e1_baseline}): GPT $\sigma_b = 0.954$ vs.\ $\sigma_{\mathrm{op}} = 0.994$; DeepSeek $\sigma_b = 0.880$ vs.\ $\sigma_{\mathrm{op}} = 0.980$. The stronger evidence is at the \emph{individual handoff level}: across 180 handoffs per model, $\sigma_b$ and $\sigma_{\mathrm{op}}$ are nearly uncorrelated (Pearson $r = -0.042$ on GPT, $r = 0.086$ on DeepSeek; Spearman $\rho = -0.020$ and $0.131$). The low-$\sigma_b$ / high-$\sigma_{\mathrm{op}}$ quadrant ($\sigma_b < 0.7$, $\sigma_{\mathrm{op}} > 0.9$) is populated by 7/180 GPT handoffs and 26/180 DeepSeek handoffs --- concrete examples of operational content surviving intact while boundary metadata is silently stripped. Because $\sigma_{\mathrm{op}}$ stays near ceiling regardless of where $\sigma_b$ lands, the failure is not a generic compression-loss effect; it is selective. Full per-handoff $(\sigma_b, \sigma_{\mathrm{op}})$ data is released alongside the paper.
 
 % \begin{table}[t]
 %   \centering
@@ -52,7 +52,7 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 %     \toprule
 %      & \multicolumn{2}{c}{\textbf{GPT-5-mini}} & \multicolumn{2}{c}{\textbf{DS-R1}} \\
 %     \cmidrule(lr){2-3}\cmidrule(l){4-5}
-%     \textbf{Condition} & $\sigma$ & $\sigma_{\mathrm{op}}$ & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
+%     \textbf{Condition} & $\sigma_b$ & $\sigma_{\mathrm{op}}$ & $\sigma_b$ & $\sigma_{\mathrm{op}}$ \\
 %     \midrule
 %     \texttt{free\_text}                    & 0.976 & 1.000 & 0.781 & 0.993 \\
 %     \texttt{compressed\_free\_text}        & 0.916 & 0.990 & 0.885 & 0.962 \\
@@ -67,14 +67,14 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 %   \label{tab:e1_baseline}
 % \end{table}
 % \paragraph{Compression makes the gap large.}
-% Modern agent frameworks routinely auto-compress upstream context: LangChain's \texttt{ConversationSummaryMemory}~\cite{mavroudis2024langchain}, AutoGen's compressible message history~\cite{wu2024autogen}, and OpenAI's Assistants memory all summarize when conversation length exceeds a budget. To measure how summary collapse behaves under short memory-entry summarization budgets of the kind used in production-style agent frameworks, E2 adds two hard-budget conditions: 40 words and 25 words / one sentence. \Cref{tab:e2_stress} shows that under the 25-word budget, $\sigma$ drops sharply while $\sigma_{\mathrm{op}}$ stays near ceiling on both models. The selective-fragility signature is not an artifact of GPT-5-mini's summarization style; it replicates on a second model family with a different training pipeline.
+% Modern agent frameworks routinely auto-compress upstream context: LangChain's \texttt{ConversationSummaryMemory}~\cite{mavroudis2024langchain}, AutoGen's compressible message history~\cite{wu2024autogen}, and OpenAI's Assistants memory all summarize when conversation length exceeds a budget. To measure how summary collapse behaves under short memory-entry summarization budgets of the kind used in production-style agent frameworks, E2 adds two hard-budget conditions: 40 words and 25 words / one sentence. \Cref{tab:e2_stress} shows that under the 25-word budget, $\sigma_b$ drops sharply while $\sigma_{\mathrm{op}}$ stays near ceiling on both models. The selective-fragility signature is not an artifact of GPT-5-mini's summarization style; it replicates on a second model family with a different training pipeline.
 
 % \begin{table*}[t]
 %   \centering
 %   \small
 %   \begin{tabular}{@{}llcc@{}}
 %     \toprule
-%     \textbf{Model} & \textbf{Condition} & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
+%     \textbf{Model} & \textbf{Condition} & $\sigma_b$ & $\sigma_{\mathrm{op}}$ \\
 %     \midrule
 %     GPT-5-mini       & Baseline (E1)       & 0.954 [0.933, 0.972] & 0.994 [0.987, 1.000] \\
 %     GPT-5-mini       & 40-word compression & 0.919 [0.863, 0.962] & 0.990 [0.972, 1.000] \\
@@ -87,19 +87,19 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 %   \caption{E2 compression stress on both models. Hard compression lowers boundary-marker survival sharply while leaving operational facts near ceiling.}
 %   \label{tab:e2_stress}
 % \end{table*}
-% The compression-ratio trajectory tells the same story in continuous form. We compute $\rho = 1 - |h|/|u|$ for each handoff format. Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content. As $\rho$ moves into the positive (compressed) regime, $\sigma$ falls monotonically on both models while $\sigma_{\mathrm{op}}$ stays near ceiling, with the peak gap at the 25-word condition ($\rho = 0.454$ on GPT, $\rho = 0.636$ on DeepSeek). Full per-model $\sigma$-vs.-$\rho$ trajectories are in Appendix~\ref{app:e2}. This argues against a generic compression-loss account: compression does not degrade all information uniformly, it preferentially removes boundary metadata.
+% The compression-ratio trajectory tells the same story in continuous form. We compute $\rho = 1 - |h|/|u|$ for each handoff format. Negative $\rho$ values correspond to schemas and templates that expand the upstream transcript by adding structure around the original content. As $\rho$ moves into the positive (compressed) regime, $\sigma_b$ falls monotonically on both models while $\sigma_{\mathrm{op}}$ stays near ceiling, with the peak gap at the 25-word condition ($\rho = 0.454$ on GPT, $\rho = 0.636$ on DeepSeek). Full per-model $\sigma_b$-vs.-$\rho$ trajectories are in Appendix~\ref{app:e2}. This argues against a generic compression-loss account: compression does not degrade all information uniformly, it preferentially removes boundary metadata.
 
 \subsection{Boundary Survival Decouples from Operational Survival under Compression (RQ1)}
 \label{sec:results_rq1}
 
-E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per primary model, Pearson $r = -0.042$ on GPT-5-mini and $0.086$ on DeepSeek-R1-32B. The low-$\sigma$/high-$\sigma_{\mathrm{op}}$ quadrant ($\sigma < 0.7$, $\sigma_{\mathrm{op}} > 0.9$) contains 7/180 GPT handoffs and 26/180 DeepSeek handoffs --- handoffs that preserve operational content while silently stripping boundary metadata. Qwen3-32B replicates the mean-level E1 pattern, with $\sigma = 0.915$ and $\sigma_{\mathrm{op}} = 0.986$ over 180 handoffs. Per-condition, per-surface, per-marker-category, and per-domain breakdowns are in~\Cref{app:e1}; the full $\sigma$-vs-$\rho$ trajectory is in~\Cref{app:e2}.
+E1 shows that $\sigma_b$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per primary model, Pearson $r = -0.042$ on GPT-5-mini and $0.086$ on DeepSeek-R1-32B. Of these 180 handoffs per model, 7 (GPT-5-mini) and 26 (DeepSeek-R1-32B) fall in the low-$\sigma_b$ / high-$\sigma_{\mathrm{op}}$ quadrant --- i.e., satisfy $\sigma_b < 0.7$ \emph{and} $\sigma_{\mathrm{op}} > 0.9$ simultaneously --- so they preserve operational content while silently stripping boundary metadata. The thresholds 0.7 and 0.9 are descriptive visualization cutoffs, not analytic ones: 0.7 indexes ``at least one marker dropped from preserved/paraphrased to weakened/absent on a typical 2--3 marker scenario'' and 0.9 indexes ``no operational fact dropped below paraphrased.'' They look close because $\sigma_{\mathrm{op}}$ sits near ceiling empirically rather than because the thresholds are tight; quadrant counts at an alternative threshold pair, the binary-strict and binary-lenient $\sigma_b$ weightings, and a Spearman computed directly over the four ordinal ranks all preserve the decoupling pattern (\S\ref{sec:results_robustness}, \Cref{app:sigma_weighting}). Qwen3-32B replicates the \emph{mean-level} baseline pattern with $\sigma_b = 0.915$ and $\sigma_{\mathrm{op}} = 0.986$ over 180 handoffs --- on average both boundary markers and operational facts are preserved at baseline pressure, just as on the two primary models; the load-bearing Qwen comparison appears under compression stress below. Per-condition, per-surface, per-marker-category, and per-domain breakdowns are in~\Cref{app:e1}; the full $\sigma_b$-vs-$\rho$ trajectory is in~\Cref{app:e2}.
 
-\begin{table}[t]
+\begin{table}[!ht]
   \centering
   \small
   \begin{tabular}{@{}llcc@{}}
     \toprule
-    \textbf{Model} & \textbf{Condition} & $\sigma$ & $\sigma_{\mathrm{op}}$ \\
+    \textbf{Model} & \textbf{Condition} & $\sigma_b$ & $\sigma_{\mathrm{op}}$ \\
     \midrule
     GPT-5-mini & Baseline (E1) & 0.954 & 0.994 \\
     GPT-5-mini & 40-word       & 0.919 & 0.990 \\
@@ -112,10 +112,13 @@ E1 shows that $\sigma$ and $\sigma_{\mathrm{op}}$ decouple at the individual-han
     Qwen3-32B  & 25-word       & 0.557 & 0.977 \\
     \bottomrule
   \end{tabular}
-  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}.}
+  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma_b$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}.}
   \label{tab:e2_stress}
 \end{table}
-\Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata. Having established that boundary markers are selectively stripped, the next question is whether that loss --- and the explicitness of whatever survives --- causally determines whether forwarded content becomes audience-facing leakage.
+\Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). Qwen3-32B replicates the same pattern: from the E1 baseline to the 25-word condition, $\sigma_b$ falls from 0.915 to 0.557, while $\sigma_{\mathrm{op}}$ remains high at 0.986 and 0.977. This argues against a generic compression-loss account: compression does not degrade all information uniformly, but preferentially removes boundary metadata.
+
+\paragraph{Why the loss is selective.}
+The summarizer is not told which spans are operational facts and which are boundary markers; both appear inline in the upstream transcript without typed labels, and the $\sigma_b$ vs $\sigma_{\mathrm{op}}$ split is performed post hoc against the gold scenario annotation. Our reading of the asymmetry is that token-budget compression preserves what the model treats as task-relevant \emph{content} and discards what it treats as \emph{framing}: times, names, decisions, and explicit constraints read as substance, while hedges, ownership claims, and audience caveats read as conversational meta-commentary the downstream agent can presumably reconstruct. The model is not deciding ``drop the rule, keep the fact'' --- it is deciding ``drop the framing, keep the content,'' and the rules happen to live in the framing. E8 (\S\ref{sec:results_rq2}) supports this indirectly: once a boundary is rephrased as content-like (``X is confidential'' rather than ``use discretion''), it survives compression and constrains downstream behavior. We do not yet have a direct manipulation check labeling markers as instructions in the upstream transcript, and we flag this as a limitation of the mechanistic interpretation. Having established that boundary markers are selectively stripped, the next question is whether that loss --- and the explicitness of whatever survives --- causally determines whether forwarded content becomes audience-facing leakage.
 % \subsection{Marker Strength Causally Controls Downstream Leakage (RQ2)}
 % \label{sec:results_rq2}
 % E1 reveals many context dumps: sensitive facts forwarded inside internal handoff artifacts, often in fields labeled as local context or content not to forward. The next set of experiments tests whether such dumped content becomes final audience-facing leakage and what causally controls the answer. We construct three handoff variants matched on operational content --- \texttt{no\_dump\_marker} (operational fact plus explicit boundary rule, no sensitive content), \texttt{dump\_with\_marker} (operational fact plus sensitive content plus explicit marker), and \texttt{dump\_no\_marker} (same as the second but with the marker removed) --- and pass each to a downstream agent under four pressure conditions (E3, 144 prompts per model). Because operational content is held constant across variants within this controlled design, any difference in final leakage is attributable to marker presence and not to summarization style, scenario content, or pressure phrasing. E4 adds a fourth variant, \texttt{dump\_weak\_marker}, in which the sensitive content is forwarded with vague privacy language such as ``use discretion.'' E8 extends this into a continuous dose-response by adding two intermediate marker-strength levels (soft suggestion, explicit constraint) between vague language and a hard imperative.
@@ -297,11 +300,11 @@ Taken together, prose descriptions and exact-string redaction are insufficient, 
 \subsection{Robustness of the Main Contrasts}
 \label{sec:results_robustness}
 
-We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
+We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma_b$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
 
 \paragraph{Fisher exact tests.} All six main contrasts are highly significant under two-sided Fisher exact tests, with large risk-ratio effects: removing the explicit marker in E3 makes leakage $20$--$40\times$ more likely; the L1$\to$L2 explicitness transition in E8 makes vague hedges $5$--$6\times$ leakier than soft suggestions; and the gold-derived typed allowlist in E9 is $15$--$20\times$ protective relative to prompt-only mitigation (all $p \leq 1.6\mathrm{e}{-}3$). Per-contrast risk ratios with $95\%$ CIs and exact $p$-values are in \Cref{app:fisher}.
 
-\paragraph{$\sigma$ weighting robustness.} The selective-fragility gap between $\sigma$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable under both binary-strict and binary-lenient weightings of the four-level rubric, confirming that the result does not depend on the weakened-marker score of $0.35$ (\Cref{app:sigma_weighting}).
+\paragraph{$\sigma_b$ weighting robustness.} The selective-fragility gap between $\sigma_b$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable under both binary-strict and binary-lenient weightings of the four-level rubric, confirming that the result does not depend on the weakened-marker score of $0.35$ (\Cref{app:sigma_weighting}).
 
 % \subsection{Summary}
 % \label{sec:results_summary}
