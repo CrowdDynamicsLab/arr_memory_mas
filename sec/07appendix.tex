@@ -449,6 +449,8 @@ scheduling         & 0.729 & 0.821 \\
 \centering
 \small
 \setlength{\tabcolsep}{2pt}
+\caption{Fisher exact tests with risk ratios for the main leakage contrasts. $^{\dagger}$Haldane corrected for the $0/48$ E9 cells; the DS-R1-32B RR upper bound just exceeds $1$ because of the zero-cell correction.}
+\label{tab:fisher}
 \begin{tabular}{@{}llrr@{}}
 \toprule
 \textbf{Contrast} & \textbf{Model} & \textbf{RR [95\% CI]} & \textbf{Fisher $p$} \\
@@ -461,8 +463,6 @@ E9 allowlist vs.\ E6 & GPT-5 & $0.050$ $[0.003, 0.80]^{\dagger}$ & $1.0\mathrm{e
 E9 allowlist vs.\ E6 & DS-R1 & $0.069$ $[0.004, 1.11]^{\dagger}$ & $1.6\mathrm{e}{-}3$  \\
 \bottomrule
 \end{tabular}
-\caption{Fisher exact tests with risk ratios for the main leakage contrasts. $^{\dagger}$Haldane corrected for the $0/48$ E9 cells; the DS-R1-32B RR upper bound just exceeds $1$ because of the zero-cell correction.}
-\label{tab:fisher}
 \end{table}
 
 \subsection{$\sigma_b$ Weighting Robustness}
@@ -495,7 +495,7 @@ binary lenient & DS-R1-32B  & 0.681 & 1.000 & $-0.319$ \\
 
 The numeric mapping in Eq.~\ref{eq:judge_rubric} is convenient but ad hoc. To check that the selective-fragility result is not an artifact of placing the four judge labels on the real line, we additionally report the raw label distribution. For every (model, condition) cell we tabulate the proportion of judged items at each ordinal level (\emph{preserved}, \emph{paraphrased}, \emph{weakened}, \emph{absent}), separately for boundary markers and operational facts. The unit of analysis is the judged item, not the handoff: each handoff contributes between two and seven marker items and one to three operational items to the corresponding cell.
 
-\Cref{tab:ordinal_label_proportions_25word} reports the proportions under 25-word compression --- the condition in which the σ-σ$_\mathrm{op}$ gap in the body is largest, and therefore the cell in which the mapping concern bites hardest. Between 25\% and 39\% of boundary markers are scored \emph{absent} across the three models, while operational facts remain at 92\%-or-higher \emph{preserved} with zero \emph{absent}. The ordinal-level claim is therefore stronger than the numeric mean reports: under hard compression, a substantial fraction of boundary markers are not weakened or paraphrased but entirely dropped, whereas operational facts are essentially never dropped.
+\Cref{tab:ordinal_label_proportions_25word} reports the proportions under 25-word compression --- the condition in which the $\sigma$-$\sigma_\mathrm{op}$ gap in the body is largest, and therefore the cell in which the mapping concern bites hardest. Between 25\% and 39\% of boundary markers are scored \emph{absent} across the three models, while operational facts remain at 92\%-or-higher \emph{preserved} with zero \emph{absent}. The ordinal-level claim is therefore stronger than the numeric mean reports: under hard compression, a substantial fraction of boundary markers are not weakened or paraphrased but entirely dropped, whereas operational facts are essentially never dropped.
 
 \input{tables/ordinal_label_proportions.tex}
 
