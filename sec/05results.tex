@@ -297,7 +297,7 @@ Phrase-level enforcement removes exact strings but not semantic leakage. In E7, 
 E9 is a positive upper-bound probe: when downstream agents receive a gold-derived typed handoff in which facts carry explicit \texttt{allowed\_audiences} fields, final leakage drops to $0/48$ on the two primary models and $4/48$ on Qwen3-32B, far below the $36/48$ no-marker control (\Cref{app:e9}). A corrupted-allowlist stress test confirms that correctness and machine-readability are load-bearing: negation-flip corruption leaks in $44/48$, $38/48$, and $35/48$ cases on GPT, DeepSeek, and Qwen --- close to no-marker controls.
 
 \label{sec:results_robustness}
-All six main leakage contrasts (E3, E8, E9) are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$, $5$--$6\times$, and $15$--$20\times$ risk-ratio effects respectively; the $\sigma_b$/$\sigma_{\mathrm{op}}$ gap is stable under binary-strict and binary-lenient rubric weightings (\Cref{app:fisher,app:sigma_weighting}).
+All six main leakage contrasts (E3, E8, E9) are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$, $5$--$6\times$, and $15$--$20\times$ risk-ratio effects respectively; the $\sigma_b$/$\sigma_{\mathrm{op}}$ gap is stable under binary-strict and binary-lenient rubric weightings (\Cref{app:fisher,app:sigma_weighting}) and is also visible directly in the four-level ordinal label proportions, where $25$--$39\%$ of boundary markers are scored \emph{absent} under 25-word compression while operational facts remain at $\geq 92\%$ \emph{preserved} (\Cref{app:ordinal_labels}).
 
 % \subsection{Summary}
 % \label{sec:results_summary}
