@@ -62,7 +62,12 @@ Total              & 36 & 37 & 29 & 72 (24 / 24 / 14 / 10) \\
 \section{Run Configuration}
 \label{app:run}
 
-This section gives the run-time specification that Section~\ref{sec:setup} summarizes: prompt counts, the E1 stratification scheme, the judge prompt template, the leakage detector, and the manual-labeling protocol.
+This section gives the run-time specification that Section~\ref{sec:setup} summarizes: models and compute, prompt counts, the E1 stratification scheme, the judge prompt template, the leakage detector, and the manual-labeling protocol.
+
+\subsection{Models, Licenses, and Compute}
+\label{app:models_compute}
+
+Experiments use GPT-5-mini through the OpenAI API, DeepSeek-R1-32B and Qwen3-32B through a campus inference endpoint. GPT-5-mini is accessed via the OpenAI API under its standard terms of service; DeepSeek-R1-32B (MIT-licensed weights) and Qwen3-32B (Apache 2.0 weights) are accessed via a campus inference endpoint. Our use of these models is consistent with their intended research and evaluation use. We will release the BOUND-Handoff testbed, leakage detector, and evaluation scripts under a permissive open-source license (MIT) for non-commercial research use on multi-agent privacy; because all scenarios are hand-authored synthetic vignettes containing no real user data, no derivative-data restrictions apply. We report inference settings (temperature 0.1) and prompt counts (Section~\ref{sec:setup}, Appendix~\ref{app:counts}) sufficient for reproduction. We do not fine-tune any model and do not train new model weights, so the carbon and compute footprint of our work consists solely of inference. DeepSeek-R1-32B and Qwen3-32B are 32B-parameter dense transformers; GPT-5-mini's parameter count is not publicly disclosed. Open-model inference was run on a campus endpoint using NVIDIA A100 40GB GPUs, with approximately 4.9 GPU-hours of serial campus inference for DeepSeek-R1-32B and 2.4 GPU-hours for Qwen3-32B ($\approx 7.3$ serial GPU-hours total, run in $3$--$4$ hours of wall-clock with concurrent tracks). LLM-judge scoring added approximately 23 minutes for DeepSeek E1+E2 and 14 minutes for Qwen E1+E2, at a per-prompt cadence of roughly 8--17 seconds. GPT-5-mini was queried through the OpenAI API and used no local GPU compute.
 
 \subsection{Experiment Families}
 \label{app:experiments_family}
