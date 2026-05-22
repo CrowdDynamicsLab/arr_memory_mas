@@ -300,11 +300,7 @@ Taken together, prose descriptions and exact-string redaction are insufficient, 
 \subsection{Robustness of the Main Contrasts}
 \label{sec:results_robustness}
 
-We report Fisher exact tests for the main leakage contrasts and check that the central selective-fragility result is robust to alternative $\sigma_b$ weighting schemes. These tests are descriptive robustness checks rather than a replacement for the controlled design; the main conclusions are unchanged.
-
-\paragraph{Fisher exact tests.} All six main contrasts are highly significant under two-sided Fisher exact tests, with large risk-ratio effects: removing the explicit marker in E3 makes leakage $20$--$40\times$ more likely; the L1$\to$L2 explicitness transition in E8 makes vague hedges $5$--$6\times$ leakier than soft suggestions; and the gold-derived typed allowlist in E9 is $15$--$20\times$ protective relative to prompt-only mitigation (all $p \leq 1.6\mathrm{e}{-}3$). Per-contrast risk ratios with $95\%$ CIs and exact $p$-values are in \Cref{app:fisher}.
-
-\paragraph{$\sigma_b$ weighting robustness.} The selective-fragility gap between $\sigma_b$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable under both binary-strict and binary-lenient weightings of the four-level rubric, confirming that the result does not depend on the weakened-marker score of $0.35$ (\Cref{app:sigma_weighting}).
+All six main leakage contrasts in E3, E8, and E9 are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$ risk-ratio effects for marker removal, $5$--$6\times$ for the L1$\to$L2 transition, and $15$--$20\times$ for the gold-derived typed allowlist relative to prompt-only mitigation; the selective-fragility gap between $\sigma_b$ and $\sigma_{\mathrm{op}}$ under 25-word compression is stable under both binary-strict and binary-lenient weightings of the four-level rubric. Full risk ratios, $95\%$ CIs, and the weighting comparison are in \Cref{app:fisher,app:sigma_weighting}.
 
 % \subsection{Summary}
 % \label{sec:results_summary}
