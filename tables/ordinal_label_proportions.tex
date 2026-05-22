@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+& \multicolumn{4}{c}{markers ($n=72$)} & \multicolumn{4}{c}{operational ($n=37$)} \\
+\cmidrule(lr){2-5}\cmidrule(l){6-9}
+\textbf{Model} & pres & para & weak & abs & pres & para & weak & abs \\
+\midrule
+GPT-5-mini & 0.56 & 0.17 & 0.03 & 0.25 & 0.97 & 0.03 & 0.00 & 0.00 \\
+DS-R1-32B & 0.39 & 0.22 & 0.07 & 0.32 & 0.92 & 0.05 & 0.03 & 0.00 \\
+Qwen3-32B & 0.42 & 0.18 & 0.01 & 0.39 & 0.92 & 0.05 & 0.03 & 0.00 \\
+\bottomrule
+\end{tabular}
+\caption{Ordinal label proportions under 25-word compression. Reported directly from the four-level judge rubric without the numeric mapping in Eq.~\ref{eq:judge_rubric}. The marker $\to$ operational shift in mass toward the \emph{preserved} bucket is the same selective-fragility signature that the $\sigma$-$\sigma_\mathrm{op}$ gap reports in the body.}
+\label{tab:ordinal_label_proportions_25word}
+\end{table*}

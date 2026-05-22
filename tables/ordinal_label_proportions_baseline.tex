@@ -1,0 +1,32 @@
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llcccccccc@{}}
+\toprule
+&& \multicolumn{4}{c}{markers ($n=72$)} & \multicolumn{4}{c}{operational ($n=37$)} \\
+\cmidrule(lr){3-6}\cmidrule(l){7-10}
+\textbf{Model} & \textbf{Condition} & pres & para & weak & abs & pres & para & weak & abs \\
+\midrule
+GPT-5-mini & \texttt{free\_text} & 0.90 & 0.10 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 0.00 \\
+GPT-5-mini & \texttt{compressed\_free\_text} & 0.79 & 0.15 & 0.03 & 0.03 & 0.95 & 0.05 & 0.00 & 0.00 \\
+GPT-5-mini & \texttt{preserve\_markers\_instruction} & 0.90 & 0.06 & 0.04 & 0.00 & 0.97 & 0.03 & 0.00 & 0.00 \\
+GPT-5-mini & \texttt{sectioned\_template} & 0.96 & 0.03 & 0.01 & 0.00 & 1.00 & 0.00 & 0.00 & 0.00 \\
+GPT-5-mini & \texttt{structured\_schema} & 0.79 & 0.19 & 0.00 & 0.01 & 0.95 & 0.05 & 0.00 & 0.00 \\
+\addlinespace
+DS-R1-32B & \texttt{free\_text} & 0.61 & 0.18 & 0.10 & 0.11 & 0.97 & 0.03 & 0.00 & 0.00 \\
+DS-R1-32B & \texttt{compressed\_free\_text} & 0.74 & 0.17 & 0.07 & 0.03 & 0.84 & 0.16 & 0.00 & 0.00 \\
+DS-R1-32B & \texttt{preserve\_markers\_instruction} & 0.86 & 0.10 & 0.04 & 0.00 & 0.97 & 0.03 & 0.00 & 0.00 \\
+DS-R1-32B & \texttt{sectioned\_template} & 0.82 & 0.17 & 0.01 & 0.00 & 0.97 & 0.00 & 0.03 & 0.00 \\
+DS-R1-32B & \texttt{structured\_schema} & 0.53 & 0.39 & 0.04 & 0.04 & 0.86 & 0.11 & 0.03 & 0.00 \\
+\addlinespace
+Qwen3-32B & \texttt{free\_text} & 0.78 & 0.21 & 0.01 & 0.00 & 1.00 & 0.00 & 0.00 & 0.00 \\
+Qwen3-32B & \texttt{compressed\_free\_text} & 0.64 & 0.33 & 0.01 & 0.01 & 0.97 & 0.03 & 0.00 & 0.00 \\
+Qwen3-32B & \texttt{preserve\_markers\_instruction} & 0.89 & 0.07 & 0.04 & 0.00 & 0.97 & 0.03 & 0.00 & 0.00 \\
+Qwen3-32B & \texttt{sectioned\_template} & 0.76 & 0.24 & 0.00 & 0.00 & 0.92 & 0.08 & 0.00 & 0.00 \\
+Qwen3-32B & \texttt{structured\_schema} & 0.56 & 0.38 & 0.03 & 0.04 & 0.86 & 0.11 & 0.00 & 0.03 \\
+\bottomrule
+\end{tabular}
+\caption{E1 baseline ordinal label proportions by condition. Proportions are reported directly from the four-level judge rubric without collapsing labels into binary outcomes.}
+\label{tab:ordinal_label_proportions_baseline}
+\end{table*}
