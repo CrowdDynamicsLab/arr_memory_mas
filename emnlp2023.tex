@@ -1,18 +1,16 @@
 % This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
-\pdfoutput=1
+% \pdfoutput=1
 % In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
 
 \documentclass[11pt]{article}
 
 % Remove the "review" option to generate the final version.
-\usepackage[]{EMNLP2023}
-
-% Standard package includes
+\usepackage[final]{acl}
+\usepackage{graphicx}
 \usepackage{times}
 \usepackage{latexsym}
 
 % For proper rendering and hyphenation of words containing Latin characters (including in bib files)
-\usepackage[T1]{fontenc}
 \usepackage{microtype}
 
 \usepackage{inconsolata}
@@ -101,9 +99,9 @@
 \input{sec/06conclusions}
 \section*{Limitations}
  
-\paragraph{Synthetic transcripts and synthetic audiences.} Audiences are synthetic: scenarios are hand-authored, and downstream agents are themselves LLMs. The empirical leakage harm we measure is mediated entirely by LLM behavior, not by human stakeholders; production-trace validation and user studies of perceived harm are necessary before any deployment-level claim.
+\paragraph{Synthetic transcripts and synthetic audiences.} Our scenarios are hand-authored and our downstream agents are LLMs, so the leakage we measure is mediated by model behavior, not by human stakeholders. Real transcripts differ in three ways, and all three would likely push $\sigma_b$ \emph{lower} than what we report. Real boundaries are stated less explicitly, and our E8 gradient shows vague markers survive less. Real transcripts are longer and noisier, which raises compression pressure. And real pipelines run for many turns, where a rule stated once can be dropped at any later step. The one exception is structured production fields, which may preserve markers better and is what our typed-allowlist result argues for. Our setting therefore likely understates the failure. Production-trace validation and user studies of perceived harm are still needed before any deployment-level claim.
 
-\paragraph{Author-conducted manual audits.} The leakage detector calibration, the $\sigma$-judge audit, the weak-marker audits, and the E7 redacted-output audit were conducted by the authors rather than independent annotators, so inter-annotator agreement numbers are not reported. A standalone human-subjects dataset would require an independent annotator pool.
+\paragraph{Scope of independent annotation.} Independent annotation covers E7 only. Two annotators external to the author team re-scored a balanced sample of E7 outputs, and we report inter-annotator agreement along with a conservative dual-agreement floor. The remaining human labels were produced by two of the authors, blind to condition. We release written instructions and raw labels for every pass so these can be re-scored externally, but they are not independent annotation and we do not present them as such.
 
 \paragraph{Language.} All scenarios are in English; whether the L1$\to$L2 dose-response transition replicates in languages with different politeness conventions or modal verb systems is open (see Conclusion for the concrete next step).
 
@@ -116,14 +114,16 @@ This work studies privacy failure modes in multi-agent LLM coordination. We outl
 
 \paragraph{Dual-use considerations.} A paper that catalogues how multi-agent systems leak private information could in principle inform an adversary. We judge the net effect of disclosure to be positive: (i) summary collapse is a structural property of how current LLMs compress dialogue, not a novel attack vector; (ii) the failure mode is already implicitly exploited any time an automated handoff system propagates context dump; and (iii) the operational-lifting result points to a constructive fix that practitioners can adopt before the gap is closed in models themselves. Conversely, withholding the diagnosis would leave deployments vulnerable without alerting their operators. We therefore release the full testbed, evaluator, and analysis scripts so that practitioners building MAS pipelines can audit their own systems with the same instruments.
 
-\paragraph{Model and compute use.} Model identities, license and intended-use details, parameter counts, hardware (NVIDIA A100 40GB campus endpoint and OpenAI API), and total inference budget are reported in Appendix~\ref{app:models_compute}. We do not fine-tune any model and do not train new model weights, so the carbon and compute footprint of our work consists solely of inference. No human subjects participated in the experiments themselves; the manual labeling described in Section~\ref{sec:results_eval} and Appendix~\ref{app:manual} was conducted by the authors and treated as a methodological audit, not as a labeled-data collection.
+\paragraph{Model and compute use.} Model identities, license and intended-use details, parameter counts, hardware (NVIDIA A100 40GB campus endpoint and OpenAI API), and total inference budget are reported in Appendix~\ref{app:models_compute}. We do not fine-tune any model and do not train new model weights, so the carbon and compute footprint of our work consists solely of inference. 
+No human subjects participated in the experiments themselves. Manual labeling took two forms. Detector calibration and the $\sigma$-judge audit (Section~\ref{sec:results_eval}, Appendix~\ref{app:manual}) were performed by two of the authors and treated as a methodological audit, not as labeled-data collection. For E7 we additionally commissioned two annotators external to the author team, who re-scored a balanced sample of model-generated outputs. They were colleagues who participated voluntarily and were not compensated. The outputs they scored are model generations over synthetic vignettes and contain no real personal data.
+
 
 \paragraph{Broader impact.} The framing argument from Communication Privacy Management is normative: people maintain boundaries around private information and license its disclosure under specific use conditions. We make the analogous claim for MAS only at the mechanistic level --- handoffs preserve some propositions and weaken others. Whether a given leak constitutes a violation in deployment depends on stakeholders and context the testbed cannot capture. Deployment-level claims about harm to specific user populations would require field studies we have not conducted.
 
 \paragraph{Use of AI assistants.} We used AI assistants (large language models) to support writing: drafting and revising prose, polishing phrasing, and checking grammar and consistency. All research design, scenario authoring, experiment execution, manual annotation, statistical analysis, and final wording decisions were performed by the authors. AI assistants were not used to generate research ideas, results, or citations, and were not used in any annotation step.
 
 \bibliography{references}
-\bibliographystyle{acl_natbib}
+% \bibliographystyle{acl_natbib}
 \newpage
 \appendix
 \input{sec/07appendix}
