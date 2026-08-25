@@ -97,6 +97,7 @@
 \input{sec/04Experiment}
 \input{sec/05results}
 \input{sec/06conclusions}
+\newpage
 \section*{Limitations}
  
 \paragraph{Synthetic transcripts and synthetic audiences.} Our scenarios are hand-authored and our downstream agents are LLMs, so the leakage we measure is mediated by model behavior, not by human stakeholders. Real transcripts differ in three ways, and all three would likely push $\sigma_b$ \emph{lower} than what we report. Real boundaries are stated less explicitly, and our E8 gradient shows vague markers survive less. Real transcripts are longer and noisier, which raises compression pressure. And real pipelines run for many turns, where a rule stated once can be dropped at any later step. The one exception is structured production fields, which may preserve markers better and is what our typed-allowlist result argues for. Our setting therefore likely understates the failure. Production-trace validation and user studies of perceived harm are still needed before any deployment-level claim.
