@@ -305,26 +305,26 @@ Having shown what fails, we probe what partially fixes it (\Cref{tab:rq3_summary
 \begin{table}[t]
   \centering
   \small
-    \setlength{\tabcolsep}{3.5pt}
+      \setlength{\tabcolsep}{3.5pt}
   \begin{tabular}{@{}lcccc@{}}
     \toprule
     & \multicolumn{2}{c}{\textbf{GPT-5-mini}} & \multicolumn{2}{c}{\textbf{DS-R1}} \\
     \cmidrule(lr){2-3}\cmidrule(lr){4-5}
     \textbf{Probe} & leak & util & leak & util \\
     \midrule
-    Prompt-only mitigation & 58/288 & --- & 42/288 & --- \\
-    Exact-string redaction & 0/288 & --- & 0/288 & --- \\
-    \quad high-risk audit  & 5/40 & --- & 14/48 & --- \\
+    Prompt-only mitigation & 58/288 & 0.997 & 42/288 & 0.986 \\
+    Exact-string redaction & 0/288 & 0.998 & 0/288 & 0.997 \\
     \midrule
     Gold typed allowlist   & 0/48 & 1.000 & 0/48 & 1.000 \\
     \quad 5\% label error  & 2/48 & 0.990 & 3/48 & 0.979 \\
     \quad 10\% label error & 4/48 & 0.948 & 4/48 & 0.979 \\
     \quad 20\% label error & 9/48 & 0.938 & 9/48 & 0.896 \\
     \quad 30\% label error & 11/48 & 0.906 & 15/48 & 0.865 \\
-    Negation-flip allowlist & 44/48 & --- & 38/48 & --- \\
+    \midrule
+    Negation-flip allowlist & 44/48 & n/a & 38/48 & n/a \\
     \bottomrule
   \end{tabular}
-  \caption{RQ3 enforcement probes on the two primary models, with exact leakage and downstream task success paired per condition. Qwen3-32B is run only for the E9 corrupted-allowlist stress test (\Cref{app:e9_corrupted}). Prompt-only mitigation and exact-string redaction address only part of the failure; gold-derived operationalized boundaries suppress leakage, corrupted boundaries restore it, and graded label error degrades protection smoothly. Task success for the E6 and E7 probes is in~\Cref{app:task_success}; full noisy-allowlist curve with scenario-bootstrap intervals in~\Cref{app:noisy}.}
+  \caption{RQ3 enforcement probes on the two primary models, pairing exact leakage with downstream task success. Prompt-only mitigation and exact-string redaction leave leakage while task success stays near ceiling, so the failure is not driven by refusal; gold-derived typed boundaries suppress leakage at full utility, and graded label error degrades protection smoothly. Task success is not defined for the negation-flip stress test, which deliberately corrupts the boundary field rather than varying a deployment parameter. Qwen3-32B is run only for the corrupted-allowlist test (\Cref{app:e9_corrupted}); the manual high-risk audit of E7 outputs is discussed in the text.}
   \label{tab:rq3_summary}
 \end{table}
 Prompt-only mitigation does not stop downstream leakage: across 288 downstream prompts per model, E6 leaks in $58/288$ GPT and $42/288$ DeepSeek outputs, including nominally safe schema conditions, even though task success remains high so the failure is not driven by refusal (per-condition breakdowns in \Cref{app:e6}; task success in \Cref{app:task_success}). Prompts and schemas can describe a boundary without enforcing it.
