@@ -739,6 +739,20 @@ Total                       & 0 / 48 & 0 / 48 \\
 \end{tabular}
 \end{table}
 
+\subsection{Graded Noisy-Allowlist Curve}
+\label{app:noisy}
+
+To characterize robustness to imperfect boundary extraction, we corrupt the gold audience labels at nominal error rates of 5\%, 10\%, 20\%, and 30\%, holding the schema structure fixed. Errors are nested (each level is a superset of the one below) and balanced between sensitive false-allows and operational false-denies, so neither privacy nor utility is favoured by construction. Each level covers 12 scenarios $\times$ 4 pressure conditions ($n = 48$ per model per level).
+
+\Cref{fig:noisy_curve} plots the resulting privacy--utility frontier with 95\% bootstrap confidence intervals (10{,}000 replicates, resampled at the scenario level). Leakage rises monotonically with extraction error on both models while task success declines gradually: at 5\% error the intervals on leakage still include zero, and only at 20\% and above does leakage separate clearly from the gold condition. The typed allowlist therefore degrades predictably rather than catastrophically, but it is not error-proof, and its protection is only as good as the extraction step that populates it.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/exp4_graded_allowlist_privacy_utility_curve.pdf}
+  \caption{Privacy--utility frontier under graded audience-label error. Leak rate and task success at nominal 5/10/20/30\% error against the gold-allowlist control, with 95\% scenario-bootstrap intervals.}
+  \label{fig:noisy_curve}
+\end{figure}
+
 \subsection{Corrupted-Allowlist Stress Test for E9}
 \label{app:e9_corrupted}
 To test whether E9's effect comes from typed structure itself or from the correctness of the boundary field, we run a corrupted-allowlist stress test on the same 12 E9 scenarios and four downstream pressures, yielding 48 downstream prompts per condition per model. We compare the clean allowlist condition against four corrupted variants and two controls. The corrupted variants preserve a schema-like representation while damaging the operational boundary signal in different ways: \textbf{scope drift} broadens or weakens the allowlist; \textbf{typo allowlist key} misspells or obscures the boundary field; \textbf{format noise} embeds the boundary in a less consistently parseable format; and \textbf{negation flip} reverses or contradicts the intended deny/allow semantics. Table~\ref{tab:app_e9_corrupted} reports final leakage counts.
