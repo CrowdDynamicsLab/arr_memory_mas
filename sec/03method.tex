@@ -9,7 +9,11 @@ We distinguish two outcomes that prior work often conflates. A \emph{context dum
 
 \textsc{Bound-Handoff} is constructed for this study; no prior dataset isolates the handoff artifact at the level of granularity required to score boundary-marker survival against task-relevant operational facts. The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario provides an upstream transcript mixing operational facts with sensitive context, explicit boundary markers anchored to upstream propositions, a handoff prompt under a given condition, and a downstream task; scenarios are written so the operational facts are necessary for the downstream task while the sensitive context is not.
 
-Marker categories follow Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). We evaluate four handoff surfaces (explicit summarization, forwarding, memory replay, and report writing) and five handoff conditions (free text, compressed free text, preserve-markers instruction, sectioned template, and structured schema) that probe marker survival under different formats but are not themselves complete privacy mitigations. Crossed with 36 scenarios, the design space contains 720 handoff prompts; full surface and condition descriptions, marker examples, and the per-domain scenario manifest are in~\Cref{app:dataset}.
+% Marker categories follow Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). We evaluate four handoff surfaces (explicit summarization, forwarding, memory replay, and report writing) and five handoff conditions (free text, compressed free text, preserve-markers instruction, sectioned template, and structured schema) that probe marker survival under different formats but are not themselves complete privacy mitigations. Crossed with 36 scenarios, the design space contains 720 handoff prompts; full surface and condition descriptions, marker examples, and the per-domain scenario manifest are in~\Cref{app:dataset}.
+
+Marker categories follow Communication Privacy Management: \emph{audience constraints} (``for the coordinator only''), \emph{ownership claims} (``Alex told me this privately''), \emph{hedges} (``probably,'' ``not confirmed''), and \emph{disclosure caveats} (``do not include in the final report''). 
+The seven domains are coordination-heavy workflows where multi-agent deployments already run on compressed handoffs, spanning both regulated (medical administration, legal/compliance, HR) and routine (scheduling, enterprise IT, customer support, project management) settings, so that $\sigma_b$ is measured across varying disclosure stakes rather than within a single domain. Five handoff conditions vary compression pressure and marker support: \texttt{free\_text} (open-ended summary), \texttt{compressed\_free\_text} (length-capped), \texttt{preserve\_markers\_instruction} (explicit instruction to keep boundary metadata), \texttt{sectioned\_template} (fixed template separating operational facts from local context), and \texttt{structured\_schema} (typed fields for facts, markers, and context); E2 adds hard 40- and 25-word caps. Four handoff surfaces vary how one agent's output becomes another's input: \texttt{explicit\_summary}, \texttt{forwarding\_to\_summary}, \texttt{memory\_replay}, and \texttt{report\_writer}. These probe marker survival under different formats but are not themselves complete privacy mitigations. Crossed with 36 scenarios, the design space contains 720 handoff prompts; marker examples and the per-domain scenario manifest are in~\Cref{app:dataset}.
+
 % \paragraph{Scenarios and domains.}
 % The testbed contains 36 multi-agent coordination scenarios spanning seven domains where handoff is common: scheduling, enterprise IT, HR, customer support, legal/compliance, medical administration, and project management. Each scenario contains (i) an upstream transcript mixing operational facts with sensitive context, (ii) explicit boundary markers that license or constrain how the sensitive content may be used downstream, (iii) handoff prompts that ask an intermediate agent to produce a handoff artifact under a given condition, and (iv) a downstream task in which a second agent must act on the handoff artifact. Scenarios are written so that the operational facts are necessary for the downstream task while the sensitive context is not.
  
@@ -24,9 +28,32 @@ Marker categories follow Communication Privacy Management: \emph{audience constr
  
 \subsection{Operational Measures}
 \label{sec:measures}
+\begin{table}[t]
+\centering\small
+\begin{tabular}{@{}llp{4.2cm}@{}}
+\toprule
+\textbf{Sym.} & \textbf{Name} & \textbf{Definition (scale)} \\
+\midrule
+$\sigma_b$ & boundary-marker & mean over upstream boundary markers of a four-level judge \\
+ & survival & score: preserved (1.0), paraphrased (0.75), weakened (0.35), absent (0.0). \\
+\addlinespace
+$\sigma_{\mathrm{op}}$ & operational-fact & same score averaged over task-relevant facts: times, entities, \\
+ & survival & decisions, owners, constraints. \\
+\addlinespace
+$\rho$ & compression  & $\rho = 1-|h|/|u|$ for upstream transcript $u$ and handoff artifact $h$; \\
+ & ratio & $\rho>0$ compression, $\rho<0$ expansion. token-level \\
+\bottomrule
+\end{tabular}
+\caption{Notation. $\sigma=1.0$ means every marker survives verbatim; $\sigma=0$ means all are lost. 
+% For scale, uncompressed free-text handoffs preserve boundaries at $\sigma_b \approx 0.80$, while a 25-word budget drops $\sigma_b$ to ${\approx}0.57$ with $\sigma_{\mathrm{op}} > 0.96$.
+}
+\label{tab:notation}
+\end{table}
+
 We use three measures to separate \emph{how much} information is compressed from \emph{what kind} survives. Boundary-marker survival $\sigma_b$ is the average over upstream boundary markers of a four-level LLM-judge score (preserved / paraphrased / weakened / absent; precise weights and prompt in \Cref{app:judge-prompt}); operational-fact survival $\sigma_{\mathrm{op}}$ is the analogous average over task-relevant operational facts such as times, entities, decisions, owners, and constraints. Compression ratio is $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and handoff artifact; positive $\rho$ indicates compression and negative $\rho$ indicates expansion.
 
-Compression ratio is a token-level axis, not a semantic outcome: we use $\rho$ to indicate how much handoff pressure was applied (matching production memory-framework budgets), and rely on $\sigma_b$ and $\sigma_{\mathrm{op}}$ --- which score individual upstream propositions on the four-level rubric --- to answer the semantic question of \emph{what} survives. A shorter-but-equivalent handoff therefore registers as high $\rho$ with high $\sigma_b$ and high $\sigma_{\mathrm{op}}$; the selective-fragility claim is precisely that $\rho$ does \emph{not} predict the two survival scores uniformly. These three measures frame the experiment families described next, which vary compression pressure (E1--E2), marker strength (E3--E5, E8), and enforcement strategy (E6--E7, E9) to isolate each dimension of summary collapse.
+Compression ratio is a token-level axis, not a semantic outcome: we use $\rho$ to indicate how much handoff pressure was applied (matching production memory-framework budgets), and rely on $\sigma_b$ and $\sigma_{\mathrm{op}}$ --- which score individual upstream propositions on the four-level rubric --- to answer the semantic question of \emph{what} survives. A shorter-but-equivalent handoff therefore registers as high $\rho$ with high $\sigma_b$ and high $\sigma_{\mathrm{op}}$; the selective-fragility claim is precisely that $\rho$ does \emph{not} predict the two survival scores uniformly. 
+Together, these measures isolate three orthogonal axes of summary collapse: \emph{how much} information is compressed (varied via $\rho$ and the five handoff conditions), \emph{what kind} survives (separated via $\sigma_b$ vs.\ $\sigma_{\mathrm{op}}$ at the level of individual handoffs), and \emph{how} the surviving marker is represented (natural-language strength levels versus a typed audience-allowlist schema). \Cref{sec:setup} specifies how the experiments are executed, what counts as final leakage, and how the judge and leakage detector are validated against human labels.
 
 
 % We introduce three measures to separate \emph{how much} information is
@@ -57,11 +84,11 @@ Compression ratio is a token-level axis, not a semantic outcome: we use $\rho$ t
 % \paragraph{Compression ratio ($\rho$).}
 % We define $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and the handoff artifact. Positive $\rho$ indicates compression; negative $\rho$ indicates a handoff longer than the upstream transcript, as happens for templates and schemas.
 
-\subsection{Experiment Families}
-\label{sec:experiments}
-We group experiments into three families. E1--E2 test whether handoff compression selectively lowers boundary-marker survival while preserving operational facts. E3--E5 and E8 test whether boundary-marker strength causally controls final leakage under matched downstream tasks. E6--E7 and E9 probe enforcement: prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. Full prompt variants, counts, and manifests appear in \Cref{app:experiments_family}.
+% \subsection{Experiment Families}
+% \label{sec:experiments}
+% We group experiments into three families. E1--E2 test whether handoff compression selectively lowers boundary-marker survival while preserving operational facts. E3--E5 and E8 test whether boundary-marker strength causally controls final leakage under matched downstream tasks. E6--E7 and E9 probe enforcement: prompt-only mitigation, exact-string redaction, and a gold-derived typed allowlist upper bound. Full prompt variants, counts, and manifests appear in \Cref{app:experiments_family}.
 
-Together, the testbed and measures isolate three orthogonal axes of summary collapse: \emph{how much} information is compressed (varied via $\rho$ and the five handoff conditions, with hard $25$- and $40$-word budgets as the extreme), \emph{what kind} of information survives (separated via $\sigma_b$ vs.\ $\sigma_{\mathrm{op}}$ at the level of individual handoffs), and \emph{how} the surviving boundary marker is represented (varied across natural-language strength levels and a typed audience-allowlist schema). The next section specifies how these experiments are executed, what counts as final leakage, and how the $\sigma_b$ judge and leakage detector are validated against human labels.
+% Together, the testbed and measures isolate three orthogonal axes of summary collapse: \emph{how much} information is compressed (varied via $\rho$ and the five handoff conditions, with hard $25$- and $40$-word budgets as the extreme), \emph{what kind} of information survives (separated via $\sigma_b$ vs.\ $\sigma_{\mathrm{op}}$ at the level of individual handoffs), and \emph{how} the surviving boundary marker is represented (varied across natural-language strength levels and a typed audience-allowlist schema). The next section specifies how these experiments are executed, what counts as final leakage, and how the $\sigma_b$ judge and leakage detector are validated against human labels.
 
 
 
