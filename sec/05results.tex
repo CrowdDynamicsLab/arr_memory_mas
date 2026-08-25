@@ -245,13 +245,13 @@ Re-scoring all 720 E8 outputs with the calibrated semantic judge preserves the d
     L4 imperative        &  2 &  2 &  2 &  1 &  1 &  2 \\
     \bottomrule
   \end{tabular}
-  \caption{E8 marker-strength gradient: final leakage out of 48 per cell, under exact/alias matching and under the calibrated semantic judge. The L1$\to$L2 transition is the sharp boundary on both detectors and all three models; marker presence alone is not enough. Semantic rates are higher in absolute terms because paraphrase and category-level disclosures are counted. E3/E4 endpoint counts are in \Cref{app:e4,app:e3}.}
+  \caption{E8 marker-strength gradient: final leakage out of 48 per cell, under exact/alias matching and the calibrated semantic judge. The sharp L1$\to$L2 transition holds on both detectors and all three models; semantic rates run higher because paraphrase and category-level disclosures count. Endpoint counts in \Cref{app:e4,app:e3}.}
   \label{tab:marker_gradient}
 \end{table}
 % As a concrete instance: under a weak-marker handoff (``use discretion''), a scheduler that should say only ``Alex has a conflict'' instead emits ``Alex has a prior appointment with an immigration lawyer'' --- operational fact preserved, licensing rule lost.
 A no-handoff control (E5) removes the multi-agent step entirely: even the direct-full-marker condition leaks 20/48 GPT and 11/48 DeepSeek, more than the operationalized \texttt{dump\_with\_marker} handoff (2/48 GPT) from E3. The load-bearing axis is boundary representation as operational constraint, not multi-agent topology (\Cref{app:e5}).
 
-\paragraph{Agents rarely add missing boundaries.} The no-marker condition assumes a downstream model cannot restore a boundary that was never stated. We tested this with neutral prompts containing no privacy, audience, or disclosure cue: in a single-author manual review of 40 generated handoffs, only $3/40$ ($7.5\%$) added any language governing the protected fact, while the fact itself was almost always carried forward. Spontaneous self-tagging therefore occurs but is uncommon and unreliable. We treat the no-marker condition as a controlled intervention isolating the effect of marker presence, not as a claim that agents never add caution of their own.
+\paragraph{Agents rarely add missing boundaries.} The no-marker condition assumes a downstream model cannot restore a boundary never stated. We tested this with neutral prompts containing no privacy, audience, or disclosure cue: in a single-author manual review of 40 generated handoffs, only $3/40$ ($7.5\%$) added any language governing the protected fact, while the fact itself was almost always carried forward. Spontaneous self-tagging therefore occurs but is uncommon and unreliable. We treat the no-marker condition as a controlled intervention isolating the effect of marker presence, not as a claim that agents never add caution of their own.
 % \subsection{Observations on Enforcement (RQ3)}
 % \label{sec:results_rq3}
  
