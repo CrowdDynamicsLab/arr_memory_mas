@@ -112,9 +112,11 @@ Per-condition, per-surface, per-marker-category, and per-domain breakdowns are i
     Qwen3-32B  & Baseline (E1) & 0.915 & 0.986 \\
     Qwen3-32B  & 40-word       & 0.711 & 1.000 \\
     Qwen3-32B  & 25-word       & 0.557 & 0.977 \\
+    \midrule
+    Flagship   & 25-word       & 0.526 & 0.983 \\
     \bottomrule
   \end{tabular}
-  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma_b$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}.}
+  \caption{Compression stress: boundary-marker survival drops under hard compression while operational-fact survival remains near ceiling. Qwen3-32B reproduces the same baseline-to-compression pattern in the targeted third-model replication. Bootstrap 95\% CIs and the full $\sigma_b$-vs-$\rho$ trajectory for the two primary models are in~\Cref{app:e2}. The flagship row is a fixed-snapshot model with no reasoning or schema augmentation, run under matched compression.}
   \label{tab:e2_stress}
 \end{table}
 \Cref{tab:e2_stress} shows that hard compression amplifies the selective-fragility pattern. Under the 25-word budget, boundary-marker survival falls sharply on the two primary models while operational-fact survival remains near ceiling, and the gap widens under aggressive compression (\Cref{app:e2}). 
@@ -124,6 +126,8 @@ This argues against a generic compression-loss account: compression does not deg
 The decoupling does not depend on the numeric weights assigned to the four rubric levels. \Cref{tab:ordinal_label_proportions_25word} reports raw label proportions under 25-word compression, the condition where the $\sigma_b$--$\sigma_{\mathrm{op}}$ gap is largest and the mapping concern therefore bites hardest. Between 25\% and 39\% of boundary markers are scored \emph{absent} across the three models, while operational facts remain at 92\% or higher \emph{preserved} with zero \emph{absent}. The ordinal claim is stronger than the numeric mean suggests: under hard compression a substantial fraction of markers are not weakened or paraphrased but entirely dropped, whereas operational facts are essentially never dropped. Bootstrap procedure, baseline-condition proportions, and scenario-stratified Cochran--Mantel--Haenszel tests are in \Cref{app:ordinal_labels}.
 
 \input{tables/ordinal_label_proportions.tex}
+
+Nor is summary collapse an artifact of small or distilled models. An unconstrained flagship with raw transcript access and no schema augmentation leaks in $1/48$ audience-facing outputs, but under matched 25-word compression it shows the same selective pattern ($\sigma_b = 0.526$ [0.408, 0.640] versus $\sigma_{\mathrm{op}} = 0.983$ [0.962, 1.000]; \Cref{tab:e2_stress}). We therefore frame the typed allowlist as portable governance for transformed handoff state rather than a claim that direct flagship interaction is unsafe, and do not read $0$-vs-$1/48$ as statistical superiority.
 
 % \paragraph{Why the loss is selective.}
 % The summarizer is not told which spans are operational facts and which are boundary markers; both appear inline in the upstream transcript without typed labels, and the $\sigma_b$ vs $\sigma_{\mathrm{op}}$ split is performed post hoc against the gold scenario annotation. Our reading of the asymmetry is that token-budget compression preserves what the model treats as task-relevant \emph{content} and discards what it treats as \emph{framing}: times, names, decisions, and explicit constraints read as substance, while hedges, ownership claims, and audience caveats read as conversational meta-commentary the downstream agent can presumably reconstruct. The model is not deciding ``drop the rule, keep the fact'' --- it is deciding ``drop the framing, keep the content,'' and the rules happen to live in the framing. E8 (\S\ref{sec:results_rq2}) supports this indirectly: once a boundary is rephrased as content-like (``X is confidential'' rather than ``use discretion''), it survives compression and constrains downstream behavior. We do not yet have a direct manipulation check labeling markers as instructions in the upstream transcript, and we flag this as a limitation of the mechanistic interpretation. Having established that boundary markers are selectively stripped, the next question is whether that loss --- and the explicitness of whatever survives --- causally determines whether forwarded content becomes audience-facing leakage.
@@ -301,19 +305,26 @@ Having shown what fails, we probe what partially fixes it (\Cref{tab:rq3_summary
 \begin{table}[t]
   \centering
   \small
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lcc}
+    \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{@{}lcccc@{}}
     \toprule
-    \textbf{Probe} & \textbf{GPT-5-mini} & \textbf{DS-R1} \\
+    & \multicolumn{2}{c}{\textbf{GPT-5-mini}} & \multicolumn{2}{c}{\textbf{DS-R1}} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    \textbf{Probe} & leak & util & leak & util \\
     \midrule
-    Prompt-only mitigation & 58/288 & 42/288 \\
-    Exact-string redaction & 0/288 & 0/288 \\
-    Redaction high-risk audit & 5/40 & 14/48 \\
-    Gold allowlist & 0/48 & 0/48 \\
-    Negation-flip allowlist & 44/48 & 38/48 \\
+    Prompt-only mitigation & 58/288 & --- & 42/288 & --- \\
+    Exact-string redaction & 0/288 & --- & 0/288 & --- \\
+    \quad high-risk audit  & 5/40 & --- & 14/48 & --- \\
+    \midrule
+    Gold typed allowlist   & 0/48 & 1.000 & 0/48 & 1.000 \\
+    \quad 5\% label error  & 2/48 & 0.990 & 3/48 & 0.979 \\
+    \quad 10\% label error & 4/48 & 0.948 & 4/48 & 0.979 \\
+    \quad 20\% label error & 9/48 & 0.938 & 9/48 & 0.896 \\
+    \quad 30\% label error & 11/48 & 0.906 & 15/48 & 0.865 \\
+    Negation-flip allowlist & 44/48 & --- & 38/48 & --- \\
     \bottomrule
   \end{tabular}
-  \caption{RQ3 enforcement probes on the two primary models. Qwen3-32B is run only for the E9 corrupted-allowlist stress test; full results are in~\Cref{app:e9_corrupted}. Prompt-only mitigation and exact-string redaction address only part of the failure. Gold-derived operationalized boundaries suppress leakage, while corrupted boundaries restore it.}
+  \caption{RQ3 enforcement probes on the two primary models, with exact leakage and downstream task success paired per condition. Qwen3-32B is run only for the E9 corrupted-allowlist stress test (\Cref{app:e9_corrupted}). Prompt-only mitigation and exact-string redaction address only part of the failure; gold-derived operationalized boundaries suppress leakage, corrupted boundaries restore it, and graded label error degrades protection smoothly. Task success for the E6 and E7 probes is in~\Cref{app:task_success}; full noisy-allowlist curve with scenario-bootstrap intervals in~\Cref{app:noisy}.}
   \label{tab:rq3_summary}
 \end{table}
 Prompt-only mitigation does not stop downstream leakage: across 288 downstream prompts per model, E6 leaks in $58/288$ GPT and $42/288$ DeepSeek outputs, including nominally safe schema conditions, even though task success remains high so the failure is not driven by refusal (per-condition breakdowns in \Cref{app:e6}; task success in \Cref{app:task_success}). Prompts and schemas can describe a boundary without enforcing it.
@@ -321,6 +332,7 @@ Prompt-only mitigation does not stop downstream leakage: across 288 downstream p
 Phrase-level enforcement removes exact strings but not semantic leakage. In E7, deterministic redaction of scenario-specific disallowed phrases drops exact-phrase leakage to $0/288$ on the two primary models, but targeted high-risk audits still find paraphrase or category-level leakage in $5/40$ GPT and $14/48$ DeepSeek rows (high-risk audit; not a population estimate). Residuals are semantic: outputs remove the forbidden phrase but still reveal the sensitive category, e.g., employment status, health context, or accommodation paperwork (\Cref{app:qualitative}).
 
 E9 is a positive upper-bound probe: when downstream agents receive a gold-derived typed handoff in which facts carry explicit \texttt{allowed\_audiences} fields, final leakage drops to $0/48$ on the two primary models and $4/48$ on Qwen3-32B, far below the $36/48$ no-marker control (\Cref{app:e9}). A corrupted-allowlist stress test confirms that correctness and machine-readability are load-bearing: negation-flip corruption leaks in $44/48$, $38/48$, and $35/48$ cases on GPT, DeepSeek, and Qwen --- close to no-marker controls.
+Under nested audience-label error the typed allowlist degrades gracefully rather than catastrophically (\Cref{tab:rq3_summary}): 5\% error yields 2--3 leaks in 48 at task success $\geq 0.979$, while 30\% error reaches 11--15 in 48 at $0.906$/$0.865$. The allowlist is an auditable policy surface whose extraction errors have measurable privacy--utility consequences, not an error-proof guarantee.
 
 \label{sec:results_robustness}
 All six main leakage contrasts (E3, E8, E9) are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$, $5$--$6\times$, and $15$--$20\times$ risk-ratio effects respectively; the $\sigma_b$/$\sigma_{\mathrm{op}}$ gap is stable under binary-strict and binary-lenient rubric weightings (\Cref{app:fisher,app:sigma_weighting}) and is also visible directly in the four-level ordinal label proportions, where $25$--$39\%$ of boundary markers are scored \emph{absent} under 25-word compression while operational facts remain at $\geq 92\%$ \emph{preserved} (\Cref{app:ordinal_labels}).
