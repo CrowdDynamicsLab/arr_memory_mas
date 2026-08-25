@@ -35,7 +35,7 @@ E1 uses five handoff conditions that vary compression pressure and marker suppor
 
 Table~\ref{tab:app_scenario_manifest} summarizes the per-domain composition of the 36-scenario benchmark, including transcript length and the marker-category mix. Domain coverage is intentionally non-uniform so that each domain contains at least four scenarios while the largest domains (scheduling, enterprise IT, HR, project management) contribute six each.
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{Per-domain manifest of the 36-scenario \textsc{Bound-Handoff} benchmark. ``Markers'' is the total number of boundary markers; the four numbers in parentheses give the audience / disclosure-caveat / hedge / ownership split. ``Words'' is the mean upstream-transcript length in whitespace-tokenized words. }
 \label{tab:app_scenario_manifest}
@@ -181,7 +181,7 @@ The full design space for E1 contains $36 \times 5 \times 4 = 720$ (scenario, co
 
 % Both $\sigma_b$ and $\sigma_{\mathrm{op}}$ are scored by an LLM judge using a single template that returns JSON. The template is reproduced in Figure~\ref{fig:judge_prompt}.
 
-% \begin{figure}[h]
+% \begin{figure}[ht]
 % \small
 % \begin{tabular}{@{}p{0.95\linewidth}@{}}
 % \toprule
@@ -253,7 +253,7 @@ Overall                                & 0.954 & 0.994 & 0.880 & 0.980 \\
 \end{tabular}
 \end{table}
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{E1 baseline survival by handoff surface on {GPT-5-mini}.}
 \label{tab:app_e1_surface_gpt}
@@ -270,7 +270,7 @@ Overall                                & 0.954 & 0.994 & 0.880 & 0.980 \\
 \end{tabular}
 \end{table*}
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{E1 baseline survival by handoff surface on DeepSeek-R1-32B. }
 \label{tab:app_e1_surface_ds}
@@ -287,7 +287,7 @@ Overall                                & 0.954 & 0.994 & 0.880 & 0.980 \\
 \end{tabular}
 \end{table*}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{E1 baseline boundary survival by marker category on two primary models.}
 \label{tab:app_e1_category}
@@ -304,7 +304,7 @@ ownership & 50  & 0.925 & 0.855 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{E1 baseline survival by domain on two primary models.}
 \label{tab:app_e1_domain}
@@ -328,7 +328,7 @@ scheduling         & 0.977 & 1.000 & 0.933 & 0.983 \\
 
 Table~\ref{tab:e1_qwen_app} reports the corresponding E1 baseline for Qwen3-32B. Qwen reproduces the same mean-level pattern: operational-fact survival remains close to ceiling across conditions, while boundary-marker survival is lower and more condition-sensitive.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \small
 \caption{E1 baseline handoff survival on Qwen3-32B.}
@@ -455,7 +455,7 @@ scheduling         & 0.729 & 0.821 \\
 
 \Cref{tab:fisher} reports two-sided Fisher exact tests and risk ratios with $95\%$ CIs for the six main leakage contrasts on the two primary models. E3 tests whether \emph{marker presence} reduces final leakage when sensitive content is forwarded; E8 tests whether the \emph{L1 vague-hedge $\to$ L2 soft-suggestion} transition is the load-bearing step in the dose-response gradient; and E9 vs.\ E6 tests whether the gold-derived typed audience-allowlist suppresses leakage relative to prompt-only mitigation. All six contrasts are highly significant ($p \leq 1.6\mathrm{e}{-}3$ or smaller); risk ratios show the magnitude is large in every case --- markers cut leakage by $20$--$40\times$ (E3), vague hedges are $5$--$6\times$ leakier than soft suggestions (E8), and the gold allowlist reduces leakage $15$--$20\times$ relative to prompt-only mitigation. The marker-presence (E3) and L1$\to$L2 explicitness (E8) effects are the load-bearing tests.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \small
 \setlength{\tabcolsep}{2pt}
@@ -477,10 +477,11 @@ E9 allowlist vs.\ E6 & DS-R1 & $0.069$ $[0.004, 1.11]^{\dagger}$ & $1.6\mathrm{e
 
 \subsection{$\sigma_b$ Weighting Robustness}
 \label{app:sigma_weighting}
+The quadrant thresholds used in \S\ref{sec:results_rq1} are descriptive visualization cutoffs, not analytic ones: $\sigma_b < 0.7$ indexes ``at least one marker dropped from preserved/paraphrased to weakened/absent on a typical 2--3 marker scenario,'' and $\sigma_{\mathrm{op}} > 0.9$ indexes ``no operational fact dropped below paraphrased.'' They look close together because $\sigma_{\mathrm{op}}$ sits near ceiling empirically, not because the thresholds are tight. Quadrant counts at an alternative threshold pair, the binary-strict and binary-lenient $\sigma_b$ weightings, and a Spearman computed directly over the four ordinal ranks all preserve the decoupling pattern.
 
 \Cref{tab:sigma_weighting} reports $\sigma_b$ and $\sigma_{\mathrm{op}}$ under 25-word compression for the original four-level rubric and for two binary alternatives that remove dependence on the weakened-marker score of $0.35$. Binary-strict counts only \emph{preserved} as $1$; binary-lenient counts \emph{preserved} and \emph{paraphrased} as $1$. The gap between $\sigma_b$ and $\sigma_{\mathrm{op}}$ is stable across all three weighting schemes on both primary models, confirming that the selective-fragility result does not depend on the exact value assigned to the weakened-marker score.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
@@ -524,7 +525,7 @@ To test the selective-fragility claim while accounting for between-scenario hete
 
 Table~\ref{tab:app_e3_pressure} expands the E3 result by downstream pressure condition. E3 is the experiment with full manual labels (Section~\ref{app:manual}); the calibrated evaluator is exactly correct against those labels on {GPT-5-mini}. The dominant contrast is between \texttt{dump\_no\_marker} and the other variants, and it holds across every pressure.
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{E3 final leakage by downstream pressure. Cells report leakage / total. }
 \label{tab:app_e3_pressure}
@@ -575,7 +576,7 @@ Total                       & 44 / 48 & 38 / 48 \\
 
 Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream pressure. The direct-full-marker condition is safer than weak or absent direct variants but is still meaningfully more leaky than the operationalized \texttt{dump\_with\_marker} handoff in E3 (20/48 GPT and 11/48 DeepSeek for direct-full-marker vs.\ 2/48 and 1/48 for \texttt{dump\_with\_marker}). This contrast is the empirical content of the Section~\ref{sec:results_rq2} claim that the load-bearing axis is whether the boundary is operationalized, not whether the system uses one or two agents.
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{E5 no-handoff single-agent control by pressure. Cells report exact-phrase leakage / total.}
 \label{tab:app_e5_pressure}
@@ -600,9 +601,9 @@ Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream 
 \subsection{E6 Prompt-Only Mitigation}
 \label{app:e6}
 
-E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on DeepSeek-R1-32B. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_rq3}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on two primary models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
+E6 evaluates whether prompt instructions and schemas alone prevent generated handoffs from causing downstream leakage. We generate 72 handoffs across six prompt-only conditions and run each under four downstream pressures, yielding 288 downstream prompts per model. Overall leakage is 58/288 on GPT-5-mini and 42/288 on DeepSeek-R1-32B. Table~\ref{tab:app_e6_pressure} gives the per-condition $\times$ per-pressure leakage matrix referenced in Section~\ref{sec:results_robustness}. The two structured-schema variants leak under the audit-trace and compressed-report pressures on two primary models, even though the \texttt{structured\_schema\_safe} variant is the format intended as a privacy mitigation. DeepSeek's \texttt{minimality\_instruction} condition is the single zero-leak condition in the table.
 
-\begin{table*}[h]
+\begin{table*}[ht]
 \centering
 \caption{E6 final leakage by mitigation condition $\times$ downstream pressure. Cells report leakage / 12.}
 \label{tab:app_e6_pressure}
@@ -656,7 +657,7 @@ Overall                                 & 46 / 72 & 145 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \caption{E7 high-risk manual audit on two primary models. }
 \label{tab:app_e7_audit}
@@ -799,4 +800,4 @@ Together with the main E9 result, this stress test clarifies the open engineerin
 \section{Qualitative Failure Examples}
 \label{app:qualitative}
 
-The residual failures after phrase-level redaction in E7 are semantic rather than exact-string copies. Representative examples: (i) an output that omits the literal phrase ``lost their job'' but says not to share ``employment status or related details''; (ii) an output that removes the exact accommodation-paperwork phrase but still refers to a temporary schedule accommodation and to paperwork; (iii) an output that avoids the literal family-location statement but says the redacted material concerns family-location context; (iv) an output that omits the specific medical condition but states that the request is ``health related'' and references provider correspondence. These cases motivate the limitation in Section~\ref{sec:results_rq3}: phrase-level validation prevents direct string propagation but does not remove all sensitive-category inferences.
+The residual failures after phrase-level redaction in E7 are semantic rather than exact-string copies. Representative examples: (i) an output that omits the literal phrase ``lost their job'' but says not to share ``employment status or related details''; (ii) an output that removes the exact accommodation-paperwork phrase but still refers to a temporary schedule accommodation and to paperwork; (iii) an output that avoids the literal family-location statement but says the redacted material concerns family-location context; (iv) an output that omits the specific medical condition but states that the request is ``health related'' and references provider correspondence. These cases motivate the limitation in Section~\ref{sec:results_robustness}: phrase-level validation prevents direct string propagation but does not remove all sensitive-category inferences.

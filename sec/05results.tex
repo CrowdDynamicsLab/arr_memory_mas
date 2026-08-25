@@ -1,22 +1,22 @@
 \section{Results}
 \label{sec:results}
-We organize the findings around three claims, summarized in~\Cref{tab:main_claim}. First, boundary-marker survival $\sigma_b$ and operational-fact survival $\sigma_{\mathrm{op}}$ \emph{decouple} at the handoff level under compression: they are nearly uncorrelated, and a substantial fraction of handoffs preserve operational content while stripping boundary metadata. Second, marker \emph{strength} causally determines whether forwarded sensitive content becomes audience-facing leakage --- vague hedges fail almost as badly as no marker, while explicit constraints reduce leakage by an order of magnitude. Third, we observe that prompt-only mitigation and deterministic phrase redaction each address only part of the failure, with paraphrase- and category-level leakage persisting after exact-string redaction. 
-\begin{table*}[t]
-\centering
-\small
-\begin{tabular}{lll}
-\toprule
-Claim & Evidence & Headline \\
-\midrule
-Selective handoff loss & E1--E2 & $\sigma_b$ decouples from $\sigma_{\mathrm{op}}$; hard compression widens gap \\
-Marker strength controls leakage & E3--E4/E8 & vague markers leak far more than explicit constraints \\
-Topology alone is not the cause & E5 & direct full-marker access still leaks \\
-Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed boundaries suppress leakage \\
-\bottomrule
-\end{tabular}
-\caption{Main claims and supporting experiments. The four claims form a coherent account: boundary loss is structural (E1--E2), marker \emph{explicitness} (not mere presence) is the causal lever (E3--E4, E8), single-agent topology is not the cause (E5), and the operationalization axis separates partial fixes (E6--E7) from complete suppression in the gold-derived probe (E9). Full manifests and counts are in~\Cref{app:run}.}
-\label{tab:main_claim}
-\end{table*}
+We organize the findings around three claims. First, boundary-marker survival $\sigma_b$ and operational-fact survival $\sigma_{\mathrm{op}}$ \emph{decouple} at the handoff level under compression: they are nearly uncorrelated, and a substantial fraction of handoffs preserve operational content while stripping boundary metadata. Second, marker \emph{strength} causally determines whether forwarded sensitive content becomes audience-facing leakage --- vague hedges fail almost as badly as no marker, while explicit constraints reduce leakage by an order of magnitude. Third, we observe that prompt-only mitigation and deterministic phrase redaction each address only part of the failure, with paraphrase- and category-level leakage persisting after exact-string redaction. 
+% \begin{table*}[t]
+% \centering
+% \small
+% \begin{tabular}{lll}
+% \toprule
+% Claim & Evidence & Headline \\
+% \midrule
+% Selective handoff loss & E1--E2 & $\sigma_b$ decouples from $\sigma_{\mathrm{op}}$; hard compression widens gap \\
+% Marker strength controls leakage & E3--E4/E8 & vague markers leak far more than explicit constraints \\
+% Topology alone is not the cause & E5 & direct full-marker access still leaks \\
+% Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed boundaries suppress leakage \\
+% \bottomrule
+% \end{tabular}
+% \caption{Main claims and supporting experiments. The four claims form a coherent account: boundary loss is structural (E1--E2), marker \emph{explicitness} (not mere presence) is the causal lever (E3--E4, E8), single-agent topology is not the cause (E5), and the operationalization axis separates partial fixes (E6--E7) from complete suppression in the gold-derived probe (E9). Full manifests and counts are in~\Cref{app:run}.}
+% \label{tab:main_claim}
+% \end{table*}
 % \begin{table*}[t]
 %   \centering
 %   \small
@@ -92,7 +92,9 @@ Prose/redaction are partial & E6--E9 & prompts/redaction fail; gold typed bounda
 \subsection{Boundary Survival Decouples from Operational Survival under Compression (RQ1)}
 \label{sec:results_rq1}
 
-E1 shows that $\sigma_b$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per primary model, Pearson $r = -0.042$ on GPT-5-mini and $0.086$ on DeepSeek-R1-32B. Of these 180 handoffs per model, 7 (GPT-5-mini) and 26 (DeepSeek-R1-32B) fall in the low-$\sigma_b$ / high-$\sigma_{\mathrm{op}}$ quadrant --- i.e., satisfy $\sigma_b < 0.7$ \emph{and} $\sigma_{\mathrm{op}} > 0.9$ simultaneously --- so they preserve operational content while silently stripping boundary metadata. The thresholds 0.7 and 0.9 are descriptive visualization cutoffs, not analytic ones: 0.7 indexes ``at least one marker dropped from preserved/paraphrased to weakened/absent on a typical 2--3 marker scenario'' and 0.9 indexes ``no operational fact dropped below paraphrased.'' They look close because $\sigma_{\mathrm{op}}$ sits near ceiling empirically rather than because the thresholds are tight; quadrant counts at an alternative threshold pair, the binary-strict and binary-lenient $\sigma_b$ weightings, and a Spearman computed directly over the four ordinal ranks all preserve the decoupling pattern (\S\ref{sec:results_robustness}, \Cref{app:sigma_weighting}). 
+E1 shows that $\sigma_b$ and $\sigma_{\mathrm{op}}$ decouple at the individual-handoff level: across 180 handoffs per primary model, Pearson $r = -0.042$ on GPT-5-mini and $0.086$ on DeepSeek-R1-32B. Of these 180 handoffs per model, 7 (GPT-5-mini) and 26 (DeepSeek-R1-32B) fall in the low-$\sigma_b$ / high-$\sigma_{\mathrm{op}}$ quadrant --- i.e., satisfy $\sigma_b < 0.7$ \emph{and} $\sigma_{\mathrm{op}} > 0.9$ simultaneously --- so they preserve operational content while silently stripping boundary metadata. 
+% The thresholds 0.7 and 0.9 are descriptive visualization cutoffs, not analytic ones: 0.7 indexes ``at least one marker dropped from preserved/paraphrased to weakened/absent on a typical 2--3 marker scenario'' and 0.9 indexes ``no operational fact dropped below paraphrased.'' They look close because $\sigma_{\mathrm{op}}$ sits near ceiling empirically rather than because the thresholds are tight; quadrant counts at an alternative threshold pair, the binary-strict and binary-lenient $\sigma_b$ weightings, and a Spearman computed directly over the four ordinal ranks all preserve the decoupling pattern (\S\ref{sec:results_robustness}, \Cref{app:sigma_weighting}). 
+These thresholds are descriptive cutoffs; the decoupling is robust to alternative thresholds, weightings, and a rank-based Spearman (\Cref{app:sigma_weighting}).
 Qwen3-32B shows the same pattern across both pressure levels: at baseline, markers and operational facts are alike preserved ($\sigma_b = 0.915$, $\sigma_{\mathrm{op}} = 0.986$ over 180 handoffs), while under the 25-word budget $\sigma_b$ falls to $0.557$ and $\sigma_{\mathrm{op}}$ holds at $0.977$, which is a steeper marker loss than either primary model. Because Qwen3-32B comes from a third training pipeline, the decoupling is not an artifact of one family's summarization style. 
 Per-condition, per-surface, per-marker-category, and per-domain breakdowns are in~\Cref{app:e1}; the full $\sigma_b$-vs-$\rho$ trajectory is in~\Cref{app:e2}.
 
@@ -243,7 +245,7 @@ Re-scoring all 720 E8 outputs with the calibrated semantic judge preserves the d
     L4 imperative        &  2 &  2 &  2 &  1 &  1 &  2 \\
     \bottomrule
   \end{tabular}
-  \caption{E8 marker-strength gradient: final leakage out of 48 per cell, under exact/alias matching and under the calibrated semantic judge. The L1$\to$L2 transition is the sharp boundary on both detectors and all three models; marker presence alone is not enough. Semantic rates are higher in absolute terms because paraphrase and category-level disclosures are counted. E3/E4 endpoint counts are in \Cref{app:e4,app:e3}; Fisher tests in \Cref{sec:results_robustness}.}
+  \caption{E8 marker-strength gradient: final leakage out of 48 per cell, under exact/alias matching and under the calibrated semantic judge. The L1$\to$L2 transition is the sharp boundary on both detectors and all three models; marker presence alone is not enough. Semantic rates are higher in absolute terms because paraphrase and category-level disclosures are counted. E3/E4 endpoint counts are in \Cref{app:e4,app:e3}.}
   \label{tab:marker_gradient}
 \end{table}
 % As a concrete instance: under a weak-marker handoff (``use discretion''), a scheduler that should say only ``Alex has a conflict'' instead emits ``Alex has a prior appointment with an immigration lawyer'' --- operational fact preserved, licensing rule lost.
@@ -304,7 +306,7 @@ A no-handoff control (E5) removes the multi-agent step entirely: even the direct
 % The two observations above show that describing the boundary in prose (E6) and removing forbidden strings (E7) each address only part of the failure. As a positive existence probe, E9 supplies downstream agents with a gold-derived typed handoff in which every fact carries an explicit \texttt{allowed\_audiences} field: operational facts list the downstream audience, sensitive facts have empty allowlists, and the agent is instructed to mention a fact only when the audience appears in its allowlist. Under this condition, final leakage drops to 0/48 on both \texttt{gpt-5-mini} and \texttt{deepseek-r1:32b}. Compared with the prompt-only E6 baseline, this reduction is significant under Fisher's exact test on both models (GPT-5-mini: 0/48 vs.\ 58/288, $p = 1.04 \times 10^{-4}$; DeepSeek-R1-32B: 0/48 vs.\ 42/288, $p = 1.58 \times 10^{-3}$). Because the allowlists are hand-constructed from gold scenario annotations rather than produced by a summarizer agent, E9 should be read as an upper-bound existence probe rather than an end-to-end mitigation. The result supports the load-bearing axis identified in E5: when boundary metadata is encoded as an operational access-control constraint, downstream behavior changes; whether generated handoffs can reliably produce and preserve such structure remains an open question. To test whether this effect comes from typed structure itself or from the correctness of the boundary field, we additionally run a corrupted-allowlist stress test on both model families (Appendix~\ref{app:e9_corrupted}). In this separate stress-test run, clean allowlists produce near-zero leakage (0/48 on GPT-5-mini; 1/48 on DeepSeek-R1-32B), while corrupted variants substantially restore leakage. In particular, negation-flip corruption leaks 44/48 GPT and 38/48 DeepSeek, close to the no-marker controls of 43/48 and 39/48. This supports the interpretation that the load-bearing factor is not schema formatting alone, but \emph{correct, machine-readable} boundary operationalization.
 
 \subsection{Observations on Enforcement (RQ3)}
-\label{sec:results_rq3}
+\label{sec:results_robustness}
 
 Having shown what fails, we probe what partially fixes it (\Cref{tab:rq3_summary}).
 
@@ -342,7 +344,8 @@ Phrase-level enforcement removes exact strings but not semantic leakage. In E7, 
 E9 is a positive upper-bound probe: when downstream agents receive a gold-derived typed handoff in which facts carry explicit \texttt{allowed\_audiences} fields, final leakage drops to $0/48$ on the two primary models and $4/48$ on Qwen3-32B, far below the $36/48$ no-marker control (\Cref{app:e9}). A corrupted-allowlist stress test confirms that correctness and machine-readability are load-bearing: negation-flip corruption leaks in $44/48$, $38/48$, and $35/48$ cases on GPT, DeepSeek, and Qwen --- close to no-marker controls.
 Under nested audience-label error the typed allowlist degrades gracefully rather than catastrophically (\Cref{tab:rq3_summary}): 5\% error yields 2--3 leaks in 48 at task success $\geq 0.979$, while 30\% error reaches 11--15 in 48 at $0.906$/$0.865$. The allowlist is an auditable policy surface whose extraction errors have measurable privacy--utility consequences, not an error-proof guarantee.
 
-\label{sec:results_robustness}
+All six main leakage contrasts (E3, E8, E9) are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$, $5$--$6\times$, and $15$--$20\times$ risk ratios respectively (\Cref{sec:results_robustness}).
+
 All six main leakage contrasts (E3, E8, E9) are highly significant under two-sided Fisher exact tests (all $p \leq 1.6\mathrm{e}{-}3$), with $20$--$40\times$, $5$--$6\times$, and $15$--$20\times$ risk-ratio effects respectively; the $\sigma_b$/$\sigma_{\mathrm{op}}$ gap is stable under binary-strict and binary-lenient rubric weightings (\Cref{app:fisher,app:sigma_weighting}) and is also visible directly in the four-level ordinal label proportions, where $25$--$39\%$ of boundary markers are scored \emph{absent} under 25-word compression while operational facts remain at $\geq 92\%$ \emph{preserved} (\Cref{app:ordinal_labels}).
 
 \paragraph{Governance loss accumulates across hops.} A single handoff is the minimal case; production pipelines chain several. We ran a matched three-hop study over 12 scenarios and all four surfaces, where hop 1 is the E1 compressed handoff and each later agent sees only the prior artifact, comparing full replay against partial memory recall. Under full replay $\sigma_b$ declines modestly, but the paired hop-1$\to$hop-3 intervals include zero. Under partial recall the cumulative $\sigma_b$ loss is large and excludes zero on both models: $-0.381$ for GPT-5-mini ($95\%$ CI $[-0.604, -0.167]$) and $-0.277$ for DeepSeek-R1-32B ($[-0.498, -0.090]$). Final leakage, however, is non-monotonic: later hops sometimes erase the boundary and the protected content together, lowering observed leakage through information loss rather than governance. Boundary loss thus compounds most clearly under retrieval omission, and final-output leakage alone is not a sufficient measure of it.
