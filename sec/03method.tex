@@ -5,6 +5,27 @@ We study summary collapse through \textsc{Bound-Handoff}, a controlled testbed w
 \label{sec:leakage-definition}
 We distinguish two outcomes that prior work often conflates. A \emph{context dump} occurs when sensitive content appears in the produced handoff artifact, trace, or internal context field, with or without its governing marker; it is a property of the artifact, not of the handoff condition, and can occur under any of the five conditions described in \S\ref{sec:dataset}. Operationally, we detect context dump using the same scenario-specific exact/alias detector that scores final leakage (\S\ref{sec:leakage-definition}), applied to the handoff artifact rather than the downstream output. \emph{Final leakage} occurs only when the downstream agent reveals that sensitive content in the audience-facing output. Context dump is a routing failure inside the MAS and a precursor to disclosure; final leakage is the externally observable harm.
 
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{@{}llp{4.2cm}@{}}
+\toprule
+\textbf{Sym.} & \textbf{Name} & \textbf{Definition (scale)} \\
+\midrule
+$\sigma_b$ & boundary-marker & mean over upstream boundary markers of a four-level judge \\
+ & survival & score: preserved (1.0), paraphrased (0.75), weakened (0.35), absent (0.0). \\
+\addlinespace
+$\sigma_{\mathrm{op}}$ & operational-fact & same score averaged over task-relevant facts: times, entities, \\
+ & survival & decisions, owners, constraints. \\
+\addlinespace
+$\rho$ & compression  & $\rho = 1-|h|/|u|$ for upstream transcript $u$ and handoff artifact $h$; \\
+ & ratio & $\rho>0$ compression, $\rho<0$ expansion. token-level \\
+\bottomrule
+\end{tabular}
+\caption{Notation. $\sigma=1.0$ means every marker survives verbatim; $\sigma=0$ means all are lost.\vspace{-12pt} 
+}
+\label{tab:notation}
+\end{table}
+
 \subsection{The BOUND-Handoff Dataset}
 \label{sec:dataset}
 
@@ -29,31 +50,10 @@ The seven domains are coordination-heavy workflows where multi-agent deployments
  
 \subsection{Operational Measures}
 \label{sec:measures}
-\begin{table}[t]
-\centering\small
-\begin{tabular}{@{}llp{4.2cm}@{}}
-\toprule
-\textbf{Sym.} & \textbf{Name} & \textbf{Definition (scale)} \\
-\midrule
-$\sigma_b$ & boundary-marker & mean over upstream boundary markers of a four-level judge \\
- & survival & score: preserved (1.0), paraphrased (0.75), weakened (0.35), absent (0.0). \\
-\addlinespace
-$\sigma_{\mathrm{op}}$ & operational-fact & same score averaged over task-relevant facts: times, entities, \\
- & survival & decisions, owners, constraints. \\
-\addlinespace
-$\rho$ & compression  & $\rho = 1-|h|/|u|$ for upstream transcript $u$ and handoff artifact $h$; \\
- & ratio & $\rho>0$ compression, $\rho<0$ expansion. token-level \\
-\bottomrule
-\end{tabular}
-\caption{Notation. $\sigma=1.0$ means every marker survives verbatim; $\sigma=0$ means all are lost. 
-% For scale, uncompressed free-text handoffs preserve boundaries at $\sigma_b \approx 0.80$, while a 25-word budget drops $\sigma_b$ to ${\approx}0.57$ with $\sigma_{\mathrm{op}} > 0.96$.
-}
-\label{tab:notation}
-\end{table}
 
 We use three measures to separate \emph{how much} information is compressed from \emph{what kind} survives. Boundary-marker survival $\sigma_b$ is the average over upstream boundary markers of a four-level LLM-judge score (preserved / paraphrased / weakened / absent; precise weights and prompt in \Cref{app:judge-prompt}); operational-fact survival $\sigma_{\mathrm{op}}$ is the analogous average over task-relevant operational facts such as times, entities, decisions, owners, and constraints. Compression ratio is $\rho = 1 - |h|/|u|$, where $|u|$ and $|h|$ are the token lengths of the upstream transcript and handoff artifact; positive $\rho$ indicates compression and negative $\rho$ indicates expansion.
 
-Compression ratio is a token-level axis, not a semantic outcome: we use $\rho$ to indicate how much handoff pressure was applied (matching production memory-framework budgets), and rely on $\sigma_b$ and $\sigma_{\mathrm{op}}$ --- which score individual upstream propositions on the four-level rubric --- to answer the semantic question of \emph{what} survives. A shorter-but-equivalent handoff therefore registers as high $\rho$ with high $\sigma_b$ and high $\sigma_{\mathrm{op}}$; the selective-fragility claim is precisely that $\rho$ does \emph{not} predict the two survival scores uniformly. 
+Compression ratio is a token-level axis, not a semantic outcome: we use $\rho$ to indicate how much handoff pressure was applied (matching production memory-framework budgets), and rely on $\sigma_b$ and $\sigma_{\mathrm{op}}$---which score individual upstream propositions on the four-level rubric---to answer the semantic question of \emph{what} survives. A shorter-but-equivalent handoff therefore registers as high $\rho$ with high $\sigma_b$ and high $\sigma_{\mathrm{op}}$; the selective-fragility claim is precisely that $\rho$ does \emph{not} predict the two survival scores uniformly. 
 Together, these measures isolate three orthogonal axes of summary collapse: \emph{how much} information is compressed (varied via $\rho$ and the five handoff conditions), \emph{what kind} survives (separated via $\sigma_b$ vs.\ $\sigma_{\mathrm{op}}$ at the level of individual handoffs), and \emph{how} the surviving marker is represented (natural-language strength levels versus a typed audience-allowlist schema). \Cref{sec:setup} specifies how the experiments are executed, what counts as final leakage, and how the judge and leakage detector are validated against human labels.
 
 

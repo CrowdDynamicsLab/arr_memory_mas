@@ -453,7 +453,7 @@ scheduling         & 0.729 & 0.821 \\
 \subsection{Fisher Exact Tests for the Main Contrasts}
 \label{app:fisher}
 
-\Cref{tab:fisher} reports two-sided Fisher exact tests and risk ratios with $95\%$ CIs for the six main leakage contrasts on the two primary models. E3 tests whether \emph{marker presence} reduces final leakage when sensitive content is forwarded; E8 tests whether the \emph{L1 vague-hedge $\to$ L2 soft-suggestion} transition is the load-bearing step in the dose-response gradient; and E9 vs.\ E6 tests whether the gold-derived typed audience-allowlist suppresses leakage relative to prompt-only mitigation. All six contrasts are highly significant ($p \leq 1.6\mathrm{e}{-}3$ or smaller); risk ratios show the magnitude is large in every case --- markers cut leakage by $20$--$40\times$ (E3), vague hedges are $5$--$6\times$ leakier than soft suggestions (E8), and the gold allowlist reduces leakage $15$--$20\times$ relative to prompt-only mitigation. The marker-presence (E3) and L1$\to$L2 explicitness (E8) effects are the load-bearing tests.
+\Cref{tab:fisher} reports two-sided Fisher exact tests and risk ratios with $95\%$ CIs for the six main leakage contrasts on the two primary models. E3 tests whether \emph{marker presence} reduces final leakage when sensitive content is forwarded; E8 tests whether the \emph{L1 vague-hedge $\to$ L2 soft-suggestion} transition is the essential step in the dose-response gradient; and E9 vs.\ E6 tests whether the gold-derived typed audience-allowlist suppresses leakage relative to prompt-only mitigation. All six contrasts are highly significant ($p \leq 1.6\mathrm{e}{-}3$ or smaller); risk ratios show the magnitude is large in every case --- markers cut leakage by $20$--$40\times$ (E3), vague hedges are $5$--$6\times$ leakier than soft suggestions (E8), and the gold allowlist reduces leakage $15$--$20\times$ relative to prompt-only mitigation. The marker-presence (E3) and L1$\to$L2 explicitness (E8) effects are the important tests.
 
 \begin{table}[ht]
 \centering
@@ -574,7 +574,7 @@ Total                       & 44 / 48 & 38 / 48 \\
 \subsection{E5 No-Handoff Single-Agent Control}
 \label{app:e5}
 
-Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream pressure. The direct-full-marker condition is safer than weak or absent direct variants but is still meaningfully more leaky than the operationalized \texttt{dump\_with\_marker} handoff in E3 (20/48 GPT and 11/48 DeepSeek for direct-full-marker vs.\ 2/48 and 1/48 for \texttt{dump\_with\_marker}). This contrast is the empirical content of the Section~\ref{sec:results_rq2} claim that the load-bearing axis is whether the boundary is operationalized, not whether the system uses one or two agents.
+Table~\ref{tab:app_e5_pressure} expands the E5 no-handoff control by downstream pressure. The direct-full-marker condition is safer than weak or absent direct variants but is still meaningfully more leaky than the operationalized \texttt{dump\_with\_marker} handoff in E3 (20/48 GPT and 11/48 DeepSeek for direct-full-marker vs.\ 2/48 and 1/48 for \texttt{dump\_with\_marker}). This contrast is the empirical content of the Section~\ref{sec:results_rq2} claim that the key factor is whether the boundary is operationalized, not whether the system uses one or two agents.
 
 \begin{table*}[ht]
 \centering
